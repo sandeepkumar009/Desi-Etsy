@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema({
   artisan: { type: mongoose.Schema.Types.ObjectId, ref: "Artisan", required: true },
@@ -12,4 +12,5 @@ const productSchema = new mongoose.Schema({
   isApproved: { type: Boolean, default: false },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
+export default Product;

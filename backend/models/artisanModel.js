@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
 
 const artisanSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -10,4 +10,5 @@ const artisanSchema = new mongoose.Schema({
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 }, { timestamps: true });
 
-module.exports = mongoose.model("Artisan", artisanSchema);
+const Artisan = mongoose.model("Artisan", artisanSchema);
+export default Artisan;
