@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button.jsx";
 
 const categories = [
@@ -29,6 +30,7 @@ const heroVariants = {
 };
 
 const Home = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-full">
       {/* Full-Screen Hero Section */}
@@ -57,7 +59,10 @@ const Home = () => {
           variants={heroVariants}
           custom={3}
         >
-          <button className="bg-orange-300 text-white px-10 py-4 rounded-xl font-brand text-lg md:text-xl shadow-lg hover:bg-orange-400 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-desi-accent mt-6">
+          <button
+            className="bg-orange-300 text-white px-10 py-4 rounded-xl font-brand text-lg md:text-xl shadow-lg hover:bg-orange-400 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-desi-accent mt-6"
+            onClick={() => navigate('/products')}
+          >
             Shop Now
           </button>
         </motion.div>
@@ -214,7 +219,10 @@ const Home = () => {
             </svg>
             Ready to Discover Something Unique?
           </span>
-          <button className="bg-orange-300 text-white px-8 py-3 rounded-xl font-brand text-lg shadow-lg hover:bg-orange-400 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-desi-accent mt-6">
+          <button
+            className="bg-orange-300 text-white px-8 py-3 rounded-xl font-brand text-lg shadow-lg hover:bg-orange-400 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-desi-accent mt-6"
+            onClick={() => navigate('/products')}
+          >
             Browse Products
           </button>
         </motion.div>
