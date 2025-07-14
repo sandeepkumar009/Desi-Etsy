@@ -1,91 +1,62 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
-import Artisan from '../models/artisanModel.js';
+import { ApiError } from '../utils/ApiError.js';
+import { ApiResponse } from '../utils/ApiResponse.js';
+import generateToken from '../utils/generateToken.js';
 
-const JWT_SECRET = process.env.JWT_SECRET;
+// POST /api/auth/register - Register a new customer using email and password (Public)
+export const registerCustomer = asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
 
-// USER REGISTRATION
-export const registerUser = async (req, res, next) => {
-  try {
-    const { name, email, password, address } = req.body;
+    if (!name || !email || !password) {
+        throw new ApiError(400, 'Please provide name, email, and password.');
+    }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        throw new ApiError(409, 'User with this email already exists.');
+    }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({
-      name,
-      email,
-      passwordHash: hashedPassword,
-      address,
+    const user = await User.create({
+        name,
+        email,
+        password,
+        role: 'customer',
+        authProviders: ['email'],
     });
 
-    res.status(201).json({ message: "User registered successfully" });
-  } catch (err) {
-    next(err);
-  }
-};
+    const createdUser = await User.findById(user._id).select('-password');
+    const token = generateToken(createdUser._id, createdUser.role);
 
-// USER LOGIN
-export const loginUser = async (req, res, next) => {
-  try {
+    return res.status(201).json(
+        new ApiResponse(201, { user: createdUser, token }, "Customer registered successfully.")
+    );
+});
+
+// POST /api/auth/login - Log in user and return JWT token (Public)
+export const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!email || !password) {
+        throw new ApiError(400, 'Please provide email and password.');
+    }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    const user = await User.findOne({ email }).select('+password');
 
-    const token = jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
+    if (!user || !user.password || !(await bcrypt.compare(password, user.password))) {
+        throw new ApiError(401, 'Invalid email or password.');
+    }
 
-    res.json({ token });
-  } catch (err) {
-    next(err);
-  }
-};
+    const token = generateToken(user._id, user.role);
+    const loggedInUser = await User.findById(user._id).select('-password');
 
-// ARTISAN REGISTRATION
-export const registerArtisan = async (req, res, next) => {
-  try {
-    const { name, email, password, bio } = req.body;
+    return res.status(200).json(
+        new ApiResponse(200, { user: loggedInUser, token }, "Login successful.")
+    );
+});
 
-    const existing = await Artisan.findOne({ email });
-    if (existing) return res.status(400).json({ message: "Artisan already exists" });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const artisan = await Artisan.create({
-      name,
-      email,
-      passwordHash: hashedPassword,
-      bio,
-    });
-
-    res.status(201).json({ message: "Artisan registered successfully" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-// ARTISAN LOGIN
-export const loginArtisan = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    const artisan = await Artisan.findOne({ email });
-    if (!artisan) return res.status(400).json({ message: "Invalid credentials" });
-
-    const isMatch = await bcrypt.compare(password, artisan.passwordHash);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-    const token = jwt.sign({ id: artisan._id, role: "artisan" }, JWT_SECRET, { expiresIn: "7d" });
-
-    res.json({ token });
-  } catch (err) {
-    next(err);
-  }
-};
+// POST /api/auth/logout - Log out the currently authenticated user (Private)
+export const logoutUser = asyncHandler(async (req, res) => {
+    return res.status(200).json(new ApiResponse(200, {}, "Logged out successfully."));
+});
