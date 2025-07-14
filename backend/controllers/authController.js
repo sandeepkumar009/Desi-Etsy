@@ -4,6 +4,7 @@ import User from '../models/userModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import generateToken from '../utils/generateToken.js';
+import { uploadOnCloudinary } from '../utils/cloudinary.js';
 
 // POST /api/auth/register - Register a new customer using email and password (Public)
 export const registerCustomer = asyncHandler(async (req, res) => {
@@ -18,10 +19,19 @@ export const registerCustomer = asyncHandler(async (req, res) => {
         throw new ApiError(409, 'User with this email already exists.');
     }
 
+    let profilePictureUrl = 'https://res.cloudinary.com/diuhkgpnm/image/upload/v1752398214/default-avatar_adllv2.png'; // Default profile picture URL
+    if (req.file) {
+        const cloudinaryResponse = await uploadOnCloudinary(req.file.path);
+        if (cloudinaryResponse && cloudinaryResponse.url) {
+            profilePictureUrl = cloudinaryResponse.url;
+        }
+    }
+
     const user = await User.create({
         name,
         email,
         password,
+        profilePicture: profilePictureUrl,
         role: 'customer',
         authProviders: ['email'],
     });
@@ -54,6 +64,18 @@ export const loginUser = asyncHandler(async (req, res) => {
     return res.status(200).json(
         new ApiResponse(200, { user: loggedInUser, token }, "Login successful.")
     );
+});
+
+// GET /api/auth/google/callback - Handle Google OAuth callback and issue JWT (Public)
+// Passport middleware runs first, providing the user object in `req.user`.
+// This controller's job is to issue our own JWT and redirect to the frontend.
+export const googleAuthCallback = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const token = generateToken(user._id, user.role);
+
+    // Redirect the user to the frontend, passing the token as a query parameter.
+    // The frontend will then read this token from the URL and save it.
+    res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
 });
 
 // POST /api/auth/logout - Log out the currently authenticated user (Private)
