@@ -1,3 +1,11 @@
+/*
+================================================================================
+File: frontend/src/components/layout/Navbar.jsx (Updated Code)
+Description: This is the complete, updated code for your Navbar.jsx file,
+             integrating the new /seller route and dynamic links, based on your
+             original file.
+================================================================================
+*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -92,14 +100,16 @@ const AuthDropdown = ({ user, onLogout }) => {
               <p className="text-sm text-gray-500 truncate">{user.email}</p>
             </div>
             <div className="py-1">
-              <Link to="/dashboard/profile" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Profile</Link>
+              <Link to="/dashboard/profile" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Account</Link>
               <Link to="/dashboard/orders" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Orders</Link>
               <Link to="/dashboard/wishlist" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Wishlist</Link>
+              
+              {/* === UPDATED: Logic for Seller Links === */}
               {user.role === 'customer' && (
                 <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Become a Seller</Link>
               )}
               {user.role === 'artisan' && (
-                 <Link to="/artisan/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Seller Dashboard</Link>
+                 <Link to="/seller/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Seller Dashboard</Link>
               )}
                {user.role === 'admin' && (
                  <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin Panel</Link>
@@ -150,9 +160,14 @@ const MobileMenu = ({ isOpen, setIsOpen, user, onLogout }) => {
                         <button onClick={() => setIsOpen(false)} className="self-end mb-6 text-3xl text-gray-500">&times;</button>
                         <Link to="/" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Home</Link>
                         <Link to="/products" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Products</Link>
-                        {(!user || user.role === 'customer') && (
+                        
+                        {/* === UPDATED: Logic for Seller Links in Mobile Menu === */}
+                        {user && user.role === 'artisan' ? (
+                            <Link to="/seller/dashboard" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Seller Dashboard</Link>
+                        ) : (
                             <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Become a Seller</Link>
                         )}
+
                         <hr className="my-4"/>
                         {user ? (
                             <>
@@ -246,8 +261,13 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {(!user || user.role === 'customer') && (
-              <NavLink to="/apply-artisan">Become a Seller</NavLink>
+            {/* === UPDATED: Main Dynamic Seller Button === */}
+            {user && user.role === 'artisan' ? (
+                <Link to="/seller/dashboard" className="px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center gap-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200">
+                    Seller Dashboard
+                </Link>
+            ) : (
+                <NavLink to="/apply-artisan">Become a Seller</NavLink>
             )}
             
             <NavLink to="/notifications" className="p-2 rounded-full">

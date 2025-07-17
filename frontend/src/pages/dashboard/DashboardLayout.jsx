@@ -1,3 +1,11 @@
+/*
+================================================================================
+File: frontend/src/pages/dashboard/DashboardLayout.jsx (Updated Code)
+Description: The link to the "Seller Dashboard" has been REMOVED from this common
+             customer-facing dashboard sidebar to avoid confusion and keep this
+             layout focused on customer activities.
+================================================================================
+*/
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -49,13 +57,7 @@ export default function DashboardLayout() {
                                     <span>{link.name}</span>
                                 </DashboardNavLink>
                             ))}
-                            {/* Role-specific links can be added here */}
-                            {user.role === 'artisan' && (
-                                <DashboardNavLink to="/artisan/dashboard">
-                                    <span className="text-xl">🎨</span>
-                                    <span>Seller Dashboard</span>
-                                </DashboardNavLink>
-                            )}
+                            {/* === UPDATED: The 'artisan' role link has been removed from here === */}
                              {user.role === 'admin' && (
                                 <DashboardNavLink to="/admin/dashboard">
                                     <span className="text-xl">⚙️</span>
