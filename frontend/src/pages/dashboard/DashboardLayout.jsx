@@ -49,13 +49,7 @@ export default function DashboardLayout() {
                                     <span>{link.name}</span>
                                 </DashboardNavLink>
                             ))}
-                            {/* Role-specific links can be added here */}
-                            {user.role === 'artisan' && (
-                                <DashboardNavLink to="/artisan/dashboard">
-                                    <span className="text-xl">🎨</span>
-                                    <span>Seller Dashboard</span>
-                                </DashboardNavLink>
-                            )}
+                            {/* === UPDATED: The 'artisan' role link has been removed from here === */}
                              {user.role === 'admin' && (
                                 <DashboardNavLink to="/admin/dashboard">
                                     <span className="text-xl">⚙️</span>
