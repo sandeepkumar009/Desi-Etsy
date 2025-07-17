@@ -15,6 +15,8 @@ import ApplyArtisan from "./pages/ApplyArtisan";
 import GoogleAuthCallback from "./pages/GoogleAuthCallback";
 import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import { ProfilePage, OrdersPage, WishlistPage, SecurityPage } from "./pages/dashboard/PlaceholderPages";
+import Products from "./pages/Products";
+import ProductDetail from "./pages/ProductDetail";
 
 
 function App() {
@@ -67,6 +69,8 @@ function App() {
         </Route>
         
         {/* Add other routes like Products, Cart, etc. here */}
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetail />} />
       </Routes>
     </Layout>
   );
