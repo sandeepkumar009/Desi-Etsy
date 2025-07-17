@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
+import { getApprovedProducts } from '../../services/productService';
 
 // MOCK HOOKS for features not yet implemented
 const useNotifications = () => ({ notificationCount: 5 });
@@ -180,38 +181,61 @@ const MobileMenu = ({ isOpen, setIsOpen, user, onLogout }) => {
 const UniversalSearch = ({ isMobile = false }) => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState("All");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [categories, setCategories] = useState(["All"]);
     const categoryDropdownRef = useRef(null);
+    const navigate = useNavigate();
     useOutsideClick(categoryDropdownRef, () => setIsCategoryOpen(false));
+
+    useEffect(() => {
+        getApprovedProducts().then((products) => {
+            const uniqueCats = Array.from(new Set(products.map(p => p.category)));
+            setCategories(["All", ...uniqueCats]);
+        });
+    }, []);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        navigate('/products', { state: { search: searchTerm, category: selectedCategory } });
+    };
 
     return (
         <div className="relative w-full">
-            <div className={`flex items-center border border-gray-300 rounded-full shadow-sm bg-gray-50 focus-within:ring-2 focus-within:ring-orange-400 ${isMobile ? 'shadow-md' : ''}`}>
-                <div className="relative" ref={categoryDropdownRef}>
-                    <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-600 bg-gray-100 border-r border-gray-300 rounded-l-full hover:bg-gray-200" type="button">
-                        {selectedCategory}
-                        <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/></svg>
-                    </button>
-                    <AnimatePresence>
-                    {isCategoryOpen && (
-                        <motion.div initial={{opacity: 0, y: -5}} animate={{opacity: 1, y: 0}} exit={{opacity: 0}} className="absolute top-12 z-20 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44">
-                            <ul className="py-2 text-sm text-gray-700">
-                                {searchCategories.map(cat => (
-                                    <li key={cat}>
-                                        <button onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100">{cat}</button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </motion.div>
-                    )}
-                    </AnimatePresence>
+            <form onSubmit={handleSubmit}>
+                <div className={`flex items-center border border-gray-300 rounded-full shadow-sm bg-gray-50 focus-within:ring-2 focus-within:ring-orange-400 ${isMobile ? 'shadow-md' : ''}`}>
+                    <div className="relative" ref={categoryDropdownRef}>
+                        <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} type="button" className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-600 bg-gray-100 border-r border-gray-300 rounded-l-full hover:bg-gray-200">
+                            {selectedCategory}
+                            <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/></svg>
+                        </button>
+                        <AnimatePresence>
+                        {isCategoryOpen && (
+                            <motion.div initial={{opacity: 0, y: -5}} animate={{opacity: 1, y: 0}} exit={{opacity: 0}} className="absolute top-12 z-20 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44">
+                                <ul className="py-2 text-sm text-gray-700">
+                                    {categories.map(cat => (
+                                        <li key={cat}>
+                                            <button onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100">{cat}</button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </motion.div>
+                        )}
+                        </AnimatePresence>
+                    </div>
+                    <div className="relative w-full">
+                        <input
+                            type="search"
+                            className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-transparent rounded-r-full border-l-gray-50 border-l-2 border-transparent focus:outline-none"
+                            placeholder="Search for handmade treasures..."
+                            value={searchTerm}
+                            onChange={e => setSearchTerm(e.target.value)}
+                        />
+                        <button type="submit" className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-orange-400 rounded-r-full border border-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-orange-300">
+                            <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/></svg>
+                        </button>
+                    </div>
                 </div>
-                <div className="relative w-full">
-                    <input type="search" className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-transparent rounded-r-full border-l-gray-50 border-l-2 border-transparent focus:outline-none" placeholder="Search for handmade treasures..." required />
-                    <button type="submit" className="absolute top-0 right-0 p-2.5 text-sm font-medium h-full text-white bg-orange-400 rounded-r-full border border-orange-400 hover:bg-orange-500 focus:ring-4 focus:outline-none focus:ring-orange-300">
-                        <svg className="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/></svg>
-                    </button>
-                </div>
-            </div>
+            </form>
         </div>
     );
 };

@@ -1,14 +1,8 @@
-import React from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/common/Button.jsx";
-
-const categories = [
-  { name: "Jewelry", img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80" },
-  { name: "Decor", img: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80" },
-  { name: "Clothing", img: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80" },
-  { name: "Art", img: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80" },
-];
+import { getApprovedProducts } from '../services/productService';
 
 const whyHandmade = [
   { title: "Unique Gifts", desc: "Every item is one-of-a-kind and made with love." },
@@ -31,6 +25,29 @@ const heroVariants = {
 
 const Home = () => {
   const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    getApprovedProducts().then((data) => {
+      setProducts(data);
+      setLoading(false);
+    });
+  }, []);
+
+  // Extract unique categories from products
+  const categories = useMemo(() => {
+    const cats = Array.from(new Set(products.map(p => p.category)));
+    return cats.map(cat => ({
+      name: cat,
+      img: products.find(p => p.category === cat)?.image || '',
+    }));
+  }, [products]);
+
+  // Featured products: show first 4 for demo
+  const featuredProducts = products.slice(0, 4);
+
   return (
     <div className="w-full">
       {/* Full-Screen Hero Section */}
@@ -85,7 +102,7 @@ const Home = () => {
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
-          {categories.map((cat, i) => (
+          {categories.slice(0, 4).map((cat, i) => (
             <motion.div
               key={cat.name}
               className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col items-center p-6 cursor-pointer border-2 border-transparent hover:border-desi-primary transition-all duration-200 min-h-[220px] group"
@@ -93,12 +110,23 @@ const Home = () => {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.15, duration: 0.7, ease: 'easeOut' }}
+              onClick={() => navigate('/products', { state: { category: cat.name } })}
             >
               <img src={cat.img} alt={cat.name} className="h-24 w-24 object-cover rounded-full mb-4 border-4 border-desi-accent group-hover:border-desi-primary transition-all duration-200" onError={e => e.target.style.display='none'} />
               <span className="font-semibold text-desi-primary text-lg mt-2 font-brand tracking-wide">{cat.name}</span>
             </motion.div>
           ))}
         </motion.div>
+        {categories.length > 4 && (
+          <div className="flex justify-center mt-8">
+            <button
+              className="bg-orange-300 hover:bg-orange-400 text-white font-brand font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200"
+              onClick={() => navigate('/products')}
+            >
+              Show More Categories
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Artisan Spotlight Section */}
@@ -139,23 +167,27 @@ const Home = () => {
       >
         <h2 className="font-brand text-2xl md:text-3xl font-bold text-desi-secondary mb-8 text-center">Featured Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { name: 'Handmade Necklace', img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80', price: '₹799' },
-            { name: 'Decor Vase', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80', price: '₹599' },
-            { name: 'Cotton Kurta', img: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80', price: '₹999' },
-            { name: 'Canvas Art', img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80', price: '₹1299' },
-          ].map((prod) => (
+          {featuredProducts.slice(0, 4).map((prod) => (
             <motion.div
-              key={prod.name}
+              key={prod._id}
               whileHover={{ scale: 1.04 }}
-              className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col items-center p-4 hover:shadow-xl transition-shadow duration-200 min-h-[260px]"
+              className="rounded-xl shadow-lg overflow-hidden bg-white flex flex-col items-center p-4 hover:shadow-xl transition-shadow duration-200 min-h-[260px] cursor-pointer"
+              onClick={() => navigate(`/products/${prod._id}`)}
             >
-              <img src={prod.img} alt={prod.name} className="h-32 w-full object-cover rounded-lg mb-3" onError={e => e.target.style.display='none'} />
-              <span className="font-semibold text-desi-primary text-lg mt-2">{prod.name}</span>
-              <span className="text-desi-accent font-medium mt-1">{prod.price}</span>
+              <img src={prod.image} alt={prod.title} className="h-32 w-full object-cover rounded-lg mb-3" onError={e => e.target.style.display='none'} />
+              <span className="font-semibold text-desi-primary text-lg mt-2">{prod.title}</span>
+              <span className="text-desi-accent font-medium mt-1">₹{prod.price}</span>
               <button className="mt-3 px-4 py-2 bg-desi-primary text-white rounded-lg font-medium hover:bg-desi-accent transition-colors duration-200">View</button>
             </motion.div>
           ))}
+        </div>
+        <div className="flex justify-center mt-8">
+          <button
+            className="bg-orange-300 hover:bg-orange-400 text-white font-brand font-semibold px-8 py-3 rounded-lg shadow-lg transition-all duration-200"
+            onClick={() => navigate('/products')}
+          >
+            Show More Products
+          </button>
         </div>
       </motion.section>
 
