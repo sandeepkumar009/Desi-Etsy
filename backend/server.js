@@ -14,6 +14,8 @@ import './config/passport.js';
 import authRoutes from './routes/authRoutes.js';
 import artisanRoutes from './routes/artisanRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+
 
 // Import Middlewares
 import errorHandler from './middlewares/errorHandlerMiddleware.js';
@@ -39,6 +41,8 @@ app.use(passport.initialize());
 app.use('/api/auth', authRoutes);
 app.use('/api/artisans', artisanRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+
 
 // Health Check Route
 app.get('/', (req, res) => {
