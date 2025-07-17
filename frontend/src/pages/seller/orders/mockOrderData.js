@@ -1,10 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/mockOrderData.js (New File)
-Description: Contains detailed mock data for orders to be used across the
-             order management feature, reflecting the data model.
-================================================================================
-*/
 export const mockOrders = [
     {
         _id: 'ORD12345',

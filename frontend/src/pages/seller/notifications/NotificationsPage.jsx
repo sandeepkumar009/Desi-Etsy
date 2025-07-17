@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/NotificationsPage.jsx (New File)
-Description: A dedicated page for artisans to view and manage all their
-             business-related notifications.
-================================================================================
-*/
+// Notifications page for artisans to view and manage updates like orders, reviews, and stock alerts
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { mockNotifications as initialNotifications } from './mockNotificationData';

@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/dashboard/DashboardLayout.jsx (Updated Code)
-Description: The link to the "Seller Dashboard" has been REMOVED from this common
-             customer-facing dashboard sidebar to avoid confusion and keep this
-             layout focused on customer activities.
-================================================================================
-*/
 import React from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';

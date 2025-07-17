@@ -1,11 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/SettingsPage.jsx (Updated Code)
-Description: This page allows an artisan to view and update their shop profile
-             details including Brand Name, Story, and Banner Image. It now correctly
-             includes the 'story' field in the form.
-================================================================================
-*/
+// Allows artisans to view and update their shop profile, story, and images
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import Input from '../../../components/common/Input';
@@ -67,7 +60,7 @@ const SettingsPage = () => {
             profileImage: profileImageFile ? profileImageFile.name : 'No new profile pic'
         });
         alert("Shop details saved (simulated). Check the console for data.");
-        // Here you would call an API to update the user's artisanProfile and profilePicture
+        // Here we would call an API to update the user's artisanProfile and profilePicture
     };
 
     if (!user) {

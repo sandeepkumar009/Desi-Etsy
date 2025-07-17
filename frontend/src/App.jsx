@@ -1,10 +1,3 @@
-/*
-================================================================================
-File: frontend/src/App.jsx (Updated Code)
-Description: The routing structure has been updated to render the new functional
-             AnalyticsPage component for the /seller/analytics route.
-================================================================================
-*/
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';

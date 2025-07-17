@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/components/layout/Navbar.jsx (Updated Code)
-Description: This is the complete, updated code for your Navbar.jsx file,
-             integrating the new /seller route and dynamic links, based on your
-             original file.
-================================================================================
-*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/AnalyticsPage.jsx (New File)
-Description: A visual dashboard for artisans to track sales trends, revenue,
-             and top products using simple cards and lists instead of charts.
-================================================================================
-*/
+// Dashboard for sellers to view sales performance, revenue, and top products
 import React, { useState } from 'react';
 import { keyStats, topProducts, salesSummary } from './mockAnalyticsData';
 import Button from '../../../components/common/Button';

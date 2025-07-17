@@ -1,15 +1,7 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/ProductsPage.jsx (Updated Code)
-Description: This page now manages the state for the full CRUD workflow,
-             rendering the correct component (List, Add, Edit, View) based on
-             user actions.
-================================================================================
-*/
+// Manages full product workflow with dynamic views for listing, adding, editing, and viewing products
 import React, { useState } from 'react';
 import MyProducts from './MyProducts';
 import AddProduct from './AddProduct';
-// Import the new components from the new file
 import { EditProduct, ViewProduct } from './ProductViews';
 
 const ProductsPage = () => {

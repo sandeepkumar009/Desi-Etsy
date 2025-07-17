@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/PlaceholderSellerPages.jsx (New File)
-Description: Contains simple placeholder components for all the new,
-             not-yet-implemented pages in the Seller Portal.
-================================================================================
-*/
+// Contains reusable placeholder pages for unimplemented seller portal features
 import React from 'react';
 
 const Placeholder = ({ title, icon, children }) => (

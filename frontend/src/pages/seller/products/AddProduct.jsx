@@ -1,10 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/AddProduct.jsx (Updated Code)
-Description: The form now has a "Back to List" button and uses the Rupee
-             symbol for the price.
-================================================================================
-*/
 import React, { useState } from 'react';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';

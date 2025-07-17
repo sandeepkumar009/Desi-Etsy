@@ -1,18 +1,10 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/ChatWindow.jsx (Updated Code)
-Description: This component is updated to correctly align messages. Sent
-             messages now appear on the right with a branded color, and
-             received messages appear on the left.
-================================================================================
-*/
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 import Button from '../../../components/common/Button';
-import { currentArtisanId } from './mockMessageData'; // Import the mock ID
+import { currentArtisanId } from './mockMessageData';
 
 const ChatWindow = ({ conversation, onSendMessage }) => {
-    const { user } = useAuth(); // We still get the user for their real profile picture
+    const { user } = useAuth();
     const [newMessage, setNewMessage] = useState('');
     const messagesEndRef = useRef(null);
 
@@ -51,7 +43,6 @@ const ChatWindow = ({ conversation, onSendMessage }) => {
             <div className="flex-grow p-6 overflow-y-auto bg-gray-50">
                 <div className="space-y-4">
                     {conversation.messages.map(message => {
-                        // === THE FIX ===
                         // Compare with the consistent mock ID instead of the real user._id
                         const isSentByMe = message.senderId === currentArtisanId;
 

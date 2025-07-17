@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/OrderDetailView.jsx (Updated Code)
-Description: This component displays the full details of a single order,
-             including a visual status timeline and context-aware action buttons
-             that trigger modals for updating the order status.
-================================================================================
-*/
 import React, { useState } from 'react';
 import Button from '../../../components/common/Button';
 import { ProductDetailModal, CancelOrderModal, ShipOrderModal } from './OrderModals';

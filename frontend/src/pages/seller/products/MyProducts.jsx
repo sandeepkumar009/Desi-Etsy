@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/MyProducts.jsx (Updated Code)
-Description: The product list now calls handler functions passed via props to
-             tell the parent component (ProductsPage) which product to view/edit
-             or to switch to the "Add New" form. The price is updated to Rupee.
-================================================================================
-*/
 import React from 'react';
 import Button from '../../../components/common/Button';
 

@@ -1,10 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/mockNotificationData.js (New File)
-Description: Contains mock data for seller-specific notifications, based on
-             the notificationModel.js schema.
-================================================================================
-*/
 export const mockNotifications = [
     {
         _id: 'notif1',

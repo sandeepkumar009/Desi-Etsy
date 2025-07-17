@@ -1,12 +1,5 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/ConversationList.jsx (Updated Code)
-Description: Now uses the consistent mock ID to correctly identify the other
-             participant in each conversation.
-================================================================================
-*/
 import React from 'react';
-import { currentArtisanId } from './mockMessageData'; // Import the mock ID
+import { currentArtisanId } from './mockMessageData';
 
 const ConversationList = ({ conversations, activeConversationId, onSelectConversation }) => {
 

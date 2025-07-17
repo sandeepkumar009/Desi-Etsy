@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/components/common/CommingSoon.jsx (New File)
-Description: A user-friendly placeholder page for features that are planned
-             but not yet implemented.
-================================================================================
-*/
+// Placeholder page for features that are coming soon
 import React from 'react';
 import { Link } from 'react-router-dom';
 

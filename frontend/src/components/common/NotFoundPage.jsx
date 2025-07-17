@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/components/common/NotFoundPage.jsx (New File)
-Description: A standard 404 error page for any route that does not exist
-             within the application.
-================================================================================
-*/
+// 404 page for handling routes that don't exist in the app
 import React from 'react';
 import { Link } from 'react-router-dom';
 

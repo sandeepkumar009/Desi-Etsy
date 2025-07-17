@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/OrderModals.jsx (New File)
-Description: This file contains all the modal components used in the order
-             management workflow: viewing product details, cancelling an order,
-             and shipping an order.
-================================================================================
-*/
 import React, { useState } from 'react';
 import Modal from '../../../components/common/Modal';
 import Button from '../../../components/common/Button';

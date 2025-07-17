@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/components/layout/SellerLayout.jsx (New File)
-Description: This is the main layout for the dedicated seller portal. It contains
-             the new SellerSidebar, the new SellerNavbar, and the <Outlet> where
-             all seller-specific pages will be rendered.
-================================================================================
-*/
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import SellerNavbar from './SellerNavbar';

@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/mockAnalyticsData.js (New File)
-Description: Contains mock data for the sales analytics dashboard, structured
-             for a chart-less display.
-================================================================================
-*/
-
 // Mock data for key performance indicators (KPIs) or stat cards
 export const keyStats = [
     { name: 'Total Revenue', value: '₹87,500', change: '+12.5%', icon: '💰' },

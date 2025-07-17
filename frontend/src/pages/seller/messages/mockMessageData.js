@@ -1,11 +1,3 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/mockMessageData.js (Updated Code)
-Description: The mock user ID for the artisan is now consistently defined
-             for use in other components.
-================================================================================
-*/
-
 // Define the logged-in artisan's ID for consistent use in mock data.
 export const currentArtisanId = 'artisan1';
 

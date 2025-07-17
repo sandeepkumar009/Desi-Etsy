@@ -1,15 +1,8 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/ProductViews.jsx (New File)
-Description: This file contains the new components for viewing the full details
-             of a product and for editing an existing product.
-================================================================================
-*/
 import React, { useState, useEffect } from 'react';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 
-// --- View Product Component ---
+// View Product Component
 export const ViewProduct = ({ product, onBack }) => {
     if (!product) return null;
 

@@ -1,14 +1,7 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/OrdersPage.jsx (Updated Code)
-Description: This page is now a full-featured order management tool with
-             filtering, searching, sorting, and pagination. It controls whether
-             to display the order list or the detailed view of a single order.
-================================================================================
-*/
+// Full-featured order management page with search, filter, sort, and detail view
 import React, { useState, useMemo } from 'react';
 import OrderDetailView from './OrderDetailView';
-import { mockOrders as allMockOrders } from './mockOrderData'; // Using mock data from a separate file
+import { mockOrders as allMockOrders } from './mockOrderData';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 

@@ -1,10 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/MessagesPage.jsx (New File)
-Description: The main page for the messaging system. It features a two-column
-             layout for the conversation list and the active chat window.
-================================================================================
-*/
+// Messaging page with two-column layout: conversation list and active chat
 import React, { useState } from 'react';
 import { mockConversations } from './mockMessageData';
 import ConversationList from './ConversationList';

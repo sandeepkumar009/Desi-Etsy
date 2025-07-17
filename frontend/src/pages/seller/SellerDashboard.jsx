@@ -1,11 +1,4 @@
-/*
-================================================================================
-File: frontend/src/pages/seller/SellerDashboard.jsx (Updated Code)
-Description: This is the new "Shop Hub" landing page for the Seller Portal.
-             It prominently displays the artisan's brand identity using real data,
-             followed by key stats and recent activity.
-================================================================================
-*/
+// Displays the seller's shop hub with brand info, key stats, and recent activity
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';

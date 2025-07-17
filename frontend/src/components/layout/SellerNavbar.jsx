@@ -1,10 +1,3 @@
-/*
-================================================================================
-File: frontend/src/components/layout/SellerNavbar.jsx (Updated Code)
-Description: The navbar now includes a functional notification bell with a
-             dropdown preview for the latest seller-specific alerts.
-================================================================================
-*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';

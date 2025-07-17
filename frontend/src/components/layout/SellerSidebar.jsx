@@ -1,14 +1,6 @@
-/*
-================================================================================
-File: frontend/src/components/layout/SellerSidebar.jsx (Updated Code)
-Description: The seller sidebar has been updated with the complete navigation
-             structure for all remaining artisan features.
-================================================================================
-*/
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-// Updated list with all features for the artisan
 const sellerNavLinks = [
     { name: 'Dashboard', to: '/seller/dashboard', icon: '📊' },
     { name: 'Products', to: '/seller/products', icon: '📦' },
