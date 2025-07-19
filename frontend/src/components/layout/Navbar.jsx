@@ -2,12 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
-import { getApprovedProducts } from '../../services/productService';
+import { getAllCategories } from '../../services/productService';
 
 // MOCK HOOKS for features not yet implemented
 const useNotifications = () => ({ notificationCount: 5 });
 const useCart = () => ({ cartItemCount: 3 });
-const searchCategories = ["All", "Jewelry", "Decor", "Clothing", "Art", "Pottery"];
 // END MOCK HOOKS
 
 
@@ -97,7 +96,6 @@ const AuthDropdown = ({ user, onLogout }) => {
               <Link to="/dashboard/orders" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Orders</Link>
               <Link to="/dashboard/wishlist" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Wishlist</Link>
               
-              {/* === UPDATED: Logic for Seller Links === */}
               {user.role === 'customer' && (
                 <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Become a Seller</Link>
               )}
@@ -154,7 +152,6 @@ const MobileMenu = ({ isOpen, setIsOpen, user, onLogout }) => {
                         <Link to="/" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Home</Link>
                         <Link to="/products" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Products</Link>
                         
-                        {/* === UPDATED: Logic for Seller Links in Mobile Menu === */}
                         {user && user.role === 'artisan' ? (
                             <Link to="/seller/dashboard" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Seller Dashboard</Link>
                         ) : (
@@ -180,23 +177,36 @@ const MobileMenu = ({ isOpen, setIsOpen, user, onLogout }) => {
 
 const UniversalSearch = ({ isMobile = false }) => {
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState("All");
+    const [selectedCategory, setSelectedCategory] = useState({ id: '', name: 'All' });
     const [searchTerm, setSearchTerm] = useState("");
-    const [categories, setCategories] = useState(["All"]);
+    const [categories, setCategories] = useState([]);
     const categoryDropdownRef = useRef(null);
     const navigate = useNavigate();
     useOutsideClick(categoryDropdownRef, () => setIsCategoryOpen(false));
 
     useEffect(() => {
-        getApprovedProducts().then((products) => {
-            const uniqueCats = Array.from(new Set(products.map(p => p.category)));
-            setCategories(["All", ...uniqueCats]);
-        });
+        const fetchCategories = async () => {
+            try {
+                const fetchedCategories = await getAllCategories();
+                setCategories(fetchedCategories);
+            } catch (error) {
+                console.error("Failed to fetch categories for search bar", error);
+            }
+        };
+        fetchCategories();
     }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        navigate('/products', { state: { search: searchTerm, category: selectedCategory } });
+        // **FIX**: Navigate using URL search parameters for robust filtering
+        const params = new URLSearchParams();
+        if (searchTerm) {
+            params.set('search', searchTerm);
+        }
+        if (selectedCategory.id) {
+            params.set('category', selectedCategory.id);
+        }
+        navigate(`/products?${params.toString()}`);
     };
 
     return (
@@ -204,17 +214,21 @@ const UniversalSearch = ({ isMobile = false }) => {
             <form onSubmit={handleSubmit}>
                 <div className={`flex items-center border border-gray-300 rounded-full shadow-sm bg-gray-50 focus-within:ring-2 focus-within:ring-orange-400 ${isMobile ? 'shadow-md' : ''}`}>
                     <div className="relative" ref={categoryDropdownRef}>
-                        <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} type="button" className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-600 bg-gray-100 border-r border-gray-300 rounded-l-full hover:bg-gray-200">
-                            {selectedCategory}
+                        {/* **FIX**: Added CSS to prevent text wrapping and handle overflow */}
+                        <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} type="button" className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-600 bg-gray-100 border-r border-gray-300 rounded-l-full hover:bg-gray-200 max-w-[150px]">
+                            <span className="truncate whitespace-nowrap">{selectedCategory.name}</span>
                             <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/></svg>
                         </button>
                         <AnimatePresence>
                         {isCategoryOpen && (
-                            <motion.div initial={{opacity: 0, y: -5}} animate={{opacity: 1, y: 0}} exit={{opacity: 0}} className="absolute top-12 z-20 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44">
+                            <motion.div initial={{opacity: 0, y: -5}} animate={{opacity: 1, y: 0}} exit={{opacity: 0}} className="absolute top-12 z-20 bg-white divide-y divide-gray-100 rounded-lg shadow-lg w-44 max-h-60 overflow-y-auto">
                                 <ul className="py-2 text-sm text-gray-700">
+                                    <li>
+                                        <button onClick={() => { setSelectedCategory({ id: '', name: 'All' }); setIsCategoryOpen(false); }} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100">All</button>
+                                    </li>
                                     {categories.map(cat => (
-                                        <li key={cat}>
-                                            <button onClick={() => { setSelectedCategory(cat); setIsCategoryOpen(false); }} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100">{cat}</button>
+                                        <li key={cat._id}>
+                                            <button onClick={() => { setSelectedCategory({ id: cat._id, name: cat.name }); setIsCategoryOpen(false); }} type="button" className="inline-flex w-full px-4 py-2 hover:bg-gray-100 truncate">{cat.name}</button>
                                         </li>
                                     ))}
                                 </ul>
@@ -277,7 +291,6 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {/* === UPDATED: Main Dynamic Seller Button === */}
             {user && user.role === 'artisan' ? (
                 <Link to="/seller/dashboard" className="px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center gap-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200">
                     Seller Dashboard
@@ -329,7 +342,7 @@ const Navbar = () => {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: '-100%', opacity: 0 }}
                     transition={{ type: 'tween', ease: 'easeInOut', duration: 0.3 }}
-                    className="absolute top-full left-0 w-full bg-white shadow-lg p-4"
+                    className="absolute top-full left-0 w-full bg-white shadow-lg p-4 lg:hidden"
                 >
                     <UniversalSearch isMobile={true} />
                 </motion.div>

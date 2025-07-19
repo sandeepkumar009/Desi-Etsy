@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import api from '../services/api';
 import Loader from '../components/common/Loader';
@@ -10,14 +10,13 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
         delete api.defaults.headers.common['Authorization'];
-    };
+    }, []);
 
-    // This useEffect handles the initial authentication check on page load
     useEffect(() => {
         const initializeAuth = async () => {
             if (token) {
@@ -40,26 +39,31 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         };
         initializeAuth();
-    }, []);
+    }, [token, logout]);
 
     const login = async (newToken) => {
-        try {
-            localStorage.setItem('token', newToken);
-            api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-            const { data } = await api.get('/users/profile');
-            setUser(data.data.user);
-            setToken(newToken);
-        } catch (error) {
-            console.error("Login process failed:", error);
-            logout(); 
-            throw error; // Re-throw error to be caught by the calling component
-        }
+        localStorage.setItem('token', newToken);
+        api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        const { data } = await api.get('/users/profile');
+        setUser(data.data.user);
+        setToken(newToken);
     };
 
-    const authContextValue = { user, token, loading, login, logout };
+    const updateUser = (newUserData) => {
+        setUser(currentUser => ({
+            ...currentUser,
+            ...newUserData,
+            artisanProfile: {
+                ...currentUser.artisanProfile,
+                ...newUserData.artisanProfile,
+            },
+        }));
+    };
+
+    const authContextValue = { user, token, loading, login, logout, updateUser };
 
     if (loading) {
-        return <Loader text="Authenticating..." />;
+        return <div className="flex justify-center items-center h-screen"><Loader text="Authenticating..." /></div>;
     }
 
     return (

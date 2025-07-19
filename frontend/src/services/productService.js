@@ -1,267 +1,133 @@
-// Simulated product data for demo purposes
-const moreProducts = Array.from({ length: 81 }, (_, i) => {
-  const idx = i + 16;
-  const categories = [
-    'Home Decor', 'Accessories', 'Jewelry', 'Storage', 'Art', 'Kitchenware',
-    'Gifts', 'Home & Living', 'Clothing', 'Shoes', 'Toys & Games', 'Bath & Beauty',
-    'Books, Films & Music', 'Electronics & Accessories', 'Paper & Party Supplies', 'Pet Supplies'
-  ];
-  const cat = categories[i % categories.length];
-  return {
-    _id: String(idx),
-    image: `/assets/images/product${idx}.jpg`,
-    title: `${cat} Product ${idx}`,
-    price: 299 + (i % 10) * 100,
-    category: cat,
-    tag: i % 3 === 0 ? 'New' : i % 3 === 1 ? 'Etsy Pick' : 'Trending',
-    rating: 4 + (i % 5) * 0.1,
-    description: `This is a demo ${cat.toLowerCase()} product number ${idx}.`,
-    stock: 5 + (i % 20),
-    variants: ['Variant A', 'Variant B'],
-    artisan: `Artisan ${idx}`,
-    material: 'Mixed',
-    shipping: 'Ships in 2-4 days',
-  };
-});
+import api from './api';
 
-const products = [
-  {
-    _id: '1',
-    image: '/assets/images/product1.jpg',
-    title: 'Handmade Terracotta Vase',
-    price: 799,
-    category: 'Home Decor',
-    tag: 'New',
-    rating: 4.5,
-    description: 'A beautiful handmade terracotta vase perfect for your living room.',
-    stock: 12,
-    variants: ['Red', 'Blue', 'Green'],
-    artisan: 'Asha Kumari',
-    material: 'Terracotta',
-    shipping: 'Ships in 2-4 days',
-  },
-  {
-    _id: '2',
-    image: '/assets/images/product2.jpg',
-    title: 'Block Printed Cotton Scarf',
-    price: 499,
-    category: 'Accessories',
-    tag: 'Etsy Pick',
-    rating: 4.8,
-    description: 'Soft cotton scarf with traditional block prints.',
-    stock: 20,
-    variants: ['Yellow', 'Pink'],
-    artisan: 'Ravi Singh',
-    material: 'Cotton',
-    shipping: 'Ships in 1-3 days',
-  },
-  {
-    _id: '3',
-    image: '/assets/images/product3.jpg',
-    title: 'Brass Tribal Earrings',
-    price: 299,
-    category: 'Jewelry',
-    tag: 'New',
-    rating: 4.7,
-    description: 'Handcrafted brass earrings inspired by tribal art.',
-    stock: 8,
-    variants: ['Small', 'Large'],
-    artisan: 'Meena Devi',
-    material: 'Brass',
-    shipping: 'Ships in 2-5 days',
-  },
-  {
-    _id: '4',
-    image: '/assets/images/product4.jpg',
-    title: 'Handwoven Jute Basket',
-    price: 599,
-    category: 'Storage',
-    tag: 'Eco',
-    rating: 4.6,
-    description: 'Eco-friendly jute basket for multipurpose storage.',
-    stock: 15,
-    variants: ['Natural', 'Dyed'],
-    artisan: 'Suresh Kumar',
-    material: 'Jute',
-    shipping: 'Ships in 3-6 days',
-  },
-  {
-    _id: '5',
-    image: '/assets/images/product5.jpg',
-    title: 'Kalamkari Wall Hanging',
-    price: 999,
-    category: 'Art',
-    tag: 'Etsy Pick',
-    rating: 4.9,
-    description: 'Traditional Kalamkari art wall hanging for your home.',
-    stock: 5,
-    variants: ['Rectangle', 'Square'],
-    artisan: 'Lakshmi Rao',
-    material: 'Cotton Canvas',
-    shipping: 'Ships in 2-4 days',
-  },
-  {
-    _id: '6',
-    image: '/assets/images/product6.jpg',
-    title: 'Blue Pottery Plate',
-    price: 699,
-    category: 'Kitchenware',
-    tag: 'New',
-    rating: 4.4,
-    description: 'Hand-painted blue pottery plate from Jaipur.',
-    stock: 10,
-    variants: ['8 inch', '10 inch'],
-    artisan: 'Rohit Sharma',
-    material: 'Ceramic',
-    shipping: 'Ships in 1-3 days',
-  },
-  {
-    _id: '7',
-    image: '/assets/images/product7.jpg',
-    title: 'Macrame Wall Hanging',
-    price: 899,
-    category: 'Home Decor',
-    tag: 'Trending',
-    rating: 4.6,
-    description: 'Boho macrame wall hanging for a cozy home vibe.',
-    stock: 7,
-    variants: ['Small', 'Large'],
-    artisan: 'Priya Verma',
-    material: 'Cotton Rope',
-    shipping: 'Ships in 2-4 days',
-  },
-  {
-    _id: '8',
-    image: '/assets/images/product8.jpg',
-    title: 'Wooden Jewelry Box',
-    price: 499,
-    category: 'Jewelry',
-    tag: 'Handmade',
-    rating: 4.8,
-    description: 'Hand-carved wooden jewelry box with intricate design.',
-    stock: 10,
-    variants: ['Rectangle', 'Square'],
-    artisan: 'Amit Joshi',
-    material: 'Wood',
-    shipping: 'Ships in 3-5 days',
-  },
-  {
-    _id: '9',
-    image: '/assets/images/product9.jpg',
-    title: 'Ceramic Coffee Mug',
-    price: 299,
-    category: 'Kitchenware',
-    tag: 'Etsy Pick',
-    rating: 4.7,
-    description: 'Hand-thrown ceramic mug for your morning coffee.',
-    stock: 18,
-    variants: ['Blue', 'White'],
-    artisan: 'Sunita Patel',
-    material: 'Ceramic',
-    shipping: 'Ships in 1-2 days',
-  },
-  {
-    _id: '10',
-    image: '/assets/images/product10.jpg',
-    title: 'Hand-painted Storage Tin',
-    price: 399,
-    category: 'Storage',
-    tag: 'New',
-    rating: 4.5,
-    description: 'Colorful hand-painted tin for storing snacks or trinkets.',
-    stock: 14,
-    variants: ['Red', 'Green'],
-    artisan: 'Deepak Singh',
-    material: 'Tin',
-    shipping: 'Ships in 2-3 days',
-  },
-  {
-    _id: '11',
-    image: '/assets/images/product11.jpg',
-    title: 'Personalized Gift Box',
-    price: 1299,
-    category: 'Gifts',
-    tag: 'Gift',
-    rating: 4.9,
-    description: 'A curated box of handmade gifts for special occasions.',
-    stock: 6,
-    variants: ['Birthday', 'Anniversary'],
-    artisan: 'Giftly Yours',
-    material: 'Mixed',
-    shipping: 'Ships in 2-3 days',
-  },
-  {
-    _id: '12',
-    image: '/assets/images/product12.jpg',
-    title: 'Handwoven Throw Blanket',
-    price: 1599,
-    category: 'Home & Living',
-    tag: 'Cozy',
-    rating: 4.8,
-    description: 'Soft, handwoven throw for your living room or bedroom.',
-    stock: 9,
-    variants: ['Grey', 'Beige'],
-    artisan: 'Ritu Sharma',
-    material: 'Cotton',
-    shipping: 'Ships in 2-4 days',
-  },
-  {
-    _id: '13',
-    image: '/assets/images/product13.jpg',
-    title: 'Block Print Kurta',
-    price: 899,
-    category: 'Clothing',
-    tag: 'New',
-    rating: 4.7,
-    description: 'Traditional block print kurta for festive occasions.',
-    stock: 11,
-    variants: ['S', 'M', 'L', 'XL'],
-    artisan: 'Anjali Boutique',
-    material: 'Cotton',
-    shipping: 'Ships in 3-5 days',
-  },
-  {
-    _id: '14',
-    image: '/assets/images/product14.jpg',
-    title: 'Handmade Leather Shoes',
-    price: 1799,
-    category: 'Shoes',
-    tag: 'Handmade',
-    rating: 4.6,
-    description: 'Comfortable, stylish handmade leather shoes.',
-    stock: 8,
-    variants: ['7', '8', '9', '10'],
-    artisan: 'ShoeCraft',
-    material: 'Leather',
-    shipping: 'Ships in 2-4 days',
-  },
-  {
-    _id: '15',
-    image: '/assets/images/product15.jpg',
-    title: 'Wooden Toy Train',
-    price: 499,
-    category: 'Toys & Games',
-    tag: 'Kids',
-    rating: 4.8,
-    description: 'Classic wooden toy train for children.',
-    stock: 15,
-    variants: ['Natural', 'Painted'],
-    artisan: 'Playful Hands',
-    material: 'Wood',
-    shipping: 'Ships in 1-3 days',
-  },
-  ...moreProducts
-];
+// --- PUBLIC PRODUCT FUNCTIONS ---
 
-export const getApprovedProducts = async () => {
-  // Simulate API delay
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(products), 800);
-  });
+export const getAllProducts = async (params = {}) => {
+  try {
+    const response = await api.get('/products', { params });
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
 };
 
 export const getProductDetails = async (id) => {
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(products.find((p) => p._id === id)), 500);
-  });
-}; 
+  try {
+    const response = await api.get(`/products/${id}`);
+    return response.data.data;
+  } catch (error) {
+    console.error(`Error fetching product with id ${id}:`, error);
+    throw error;
+  }
+};
+
+
+// --- CATEGORY FUNCTIONS ---
+
+export const getAllCategories = async () => {
+    try {
+        const response = await api.get('/categories');
+        // Assuming the API returns { success: true, data: [...] }
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+    }
+};
+
+
+// --- ARTISAN-SPECIFIC PRODUCT FUNCTIONS ---
+
+export const getMyProducts = async () => {
+    try {
+        const response = await api.get('/products/my-products');
+        return response.data.data;
+    } catch (error) {
+        console.error("Error fetching artisan's products:", error);
+        throw error;
+    }
+};
+
+export const createProduct = async (productData) => {
+    try {
+        const response = await api.post('/products/create', productData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error("Error creating product:", error);
+        throw error;
+    }
+};
+
+export const updateProduct = async (productId, productData) => {
+    try {
+        const response = await api.put(`/products/${productId}`, productData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error(`Error updating product ${productId}:`, error);
+        throw error;
+    }
+};
+
+export const deleteProduct = async (productId) => {
+    try {
+        const response = await api.delete(`/products/${productId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error deleting product ${productId}:`, error);
+        throw error;
+    }
+};
+
+
+// --- REVIEW FUNCTIONS (for reference, no changes needed here) ---
+
+export const getReviewsForProduct = async (productId) => {
+    try {
+        const response = await api.get(`/reviews/${productId}`);
+        return response.data.data;
+    } catch (error) {
+        console.error(`Error fetching reviews for product ${productId}:`, error);
+        return [];
+    }
+};
+
+export const submitReview = async (productId, reviewData) => {
+    try {
+        const response = await api.post(`/reviews/${productId}`, reviewData);
+        return response.data.data;
+    } catch (error) {
+        console.error(`Error submitting review for product ${productId}:`, error);
+        throw error;
+    }
+};
+
+export const updateReview = async (reviewId, reviewData) => {
+    try {
+        const response = await api.put(`/reviews/${reviewId}`, reviewData);
+        return response.data.data;
+    } catch (error) {
+        console.error(`Error updating review ${reviewId}:`, error);
+        throw error;
+    }
+};
+
+export const checkUserPurchase = async (productId) => {
+    try {
+        const response = await api.get(`/orders/check-purchase/${productId}`);
+        return response.data.data.hasPurchased;
+    } catch (error) {
+        if (error.response?.status !== 401) {
+           console.error(`Error checking purchase status for product ${productId}:`, error);
+        }
+        return false;
+    }
+};

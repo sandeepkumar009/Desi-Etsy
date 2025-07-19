@@ -2,6 +2,105 @@ import Product from '../models/productModel.js';
 import { uploadOnCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
+import mongoose from 'mongoose';
+
+
+// Controller to get all products with filtering, pagination, and sorting
+export const getAllProducts = async (req, res, next) => {
+  try {
+    // Destructure query parameters with default values
+    const {
+      page = 1,
+      limit = 12,
+      search = '',
+      category,
+      minPrice,
+      maxPrice,
+      rating,
+      sort = 'createdAt', // Default sort by newest
+      order = 'desc', // Default order descending
+      artisanId // **NEW**: Added artisanId filter
+    } = req.query;
+
+    // --- 1. BUILD FILTER QUERY ---
+    const filter = {
+      status: 'active' // Only fetch active products
+    };
+
+    // Add search to filter (case-insensitive)
+    if (search) {
+      filter.name = { $regex: search, $options: 'i' };
+    }
+
+    // **NEW**: Add artisanId to filter
+    if (artisanId) {
+        if (!mongoose.Types.ObjectId.isValid(artisanId)) {
+            throw new ApiError(400, "Invalid artisan ID format");
+        }
+        filter.artisanId = new mongoose.Types.ObjectId(artisanId);
+    }
+
+    // Add category to filter
+    if (category) {
+        if (!mongoose.Types.ObjectId.isValid(category)) {
+            throw new ApiError(400, "Invalid category ID format");
+        }
+        filter.category = new mongoose.Types.ObjectId(category);
+    }
+
+    // Add price range to filter
+    if (minPrice || maxPrice) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+
+    // Add minimum rating to filter
+    if (rating) {
+      filter.ratingsAverage = { $gte: Number(rating) };
+    }
+
+    // --- 2. BUILD SORT QUERY ---
+    const sortOptions = {};
+    const allowedSortFields = ['price', 'ratingsAverage', 'createdAt'];
+    if (allowedSortFields.includes(sort)) {
+        sortOptions[sort] = order === 'asc' ? 1 : -1;
+    } else {
+        sortOptions['createdAt'] = -1;
+    }
+
+
+    // --- 3. EXECUTE QUERY WITH PAGINATION & SORTING ---
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const products = await Product.find(filter)
+      .populate('category', 'name')
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limitNum);
+
+    // --- 4. GET TOTAL COUNT FOR PAGINATION ---
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.ceil(totalProducts / limitNum);
+
+    // --- 5. SEND RESPONSE ---
+    res.status(200).json(new ApiResponse(200, {
+      products,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        totalProducts,
+        limit: limitNum,
+      }
+    }, 'Products fetched successfully'));
+
+  } catch (err) {
+    next(err);
+  }
+};
+
 
 export const createProduct = async (req, res, next) => {
   try {
@@ -28,8 +127,8 @@ export const createProduct = async (req, res, next) => {
 
 export const getMyProducts = async (req, res, next) => {
   try {
-    const products = await Product.find({ artisanId: req.user._id });
-    res.status(200).json(new ApiResponse(200, products));
+    const products = await Product.find({ artisanId: req.user._id }).populate('category', 'name');
+    res.status(200).json(new ApiResponse(200, products, "Artisan's products fetched successfully"));
   } catch (err) {
     next(err);
   }
@@ -80,18 +179,12 @@ export const deleteProduct = async (req, res, next) => {
   }
 };
 
-export const getAllProducts = async (req, res, next) => {
-  try {
-    const products = await Product.find({ status: 'active' });
-    res.status(200).json(new ApiResponse(200, products));
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const getProductById = async (req, res, next) => {
   try {
-    const product = await Product.findOne({ _id: req.params.id, status: 'active' });
+    const product = await Product.findOne({ _id: req.params.id, status: 'active' })
+                                  .populate('category', 'name slug')
+                                  .populate('artisanId', 'name profilePicture');
+                                  
     if (!product) throw new ApiError(404, 'Product not found');
     res.status(200).json(new ApiResponse(200, product));
   } catch (err) {
