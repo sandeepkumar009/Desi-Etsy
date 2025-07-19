@@ -15,6 +15,10 @@ import authRoutes from './routes/authRoutes.js';
 import artisanRoutes from './routes/artisanRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import analyticsRoutes from './routes/analyticsRoutes.js';
 
 
 // Import Middlewares
@@ -42,6 +46,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/artisans', artisanRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 
 // Health Check Route

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import Modal from '../../../components/common/Modal';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
@@ -9,7 +10,7 @@ export const ProductDetailModal = ({ isOpen, onClose, product }) => {
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Product Details">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <img src={product.image} alt={product.name} className="sm:col-span-1 w-full h-auto rounded-lg" />
+                <img src={product.image} alt={product.name} className="sm:col-span-1 w-full h-auto rounded-lg object-cover" />
                 <div className="sm:col-span-2 space-y-2">
                     <h3 className="text-lg font-bold">{product.name}</h3>
                     <p className="text-sm text-gray-600">{product.description || "No description available."}</p>
@@ -61,7 +62,7 @@ export const ShipOrderModal = ({ isOpen, onClose, onConfirm }) => {
 
     const handleConfirm = () => {
         if (!shippingInfo.carrier || !shippingInfo.trackingNumber) {
-            alert("Please provide both a carrier and a tracking number.");
+            toast.error("Please provide both a carrier and a tracking number.");
             return;
         }
         onConfirm(shippingInfo);

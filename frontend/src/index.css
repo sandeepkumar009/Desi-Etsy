@@ -4,3 +4,133 @@
 body {
   font-family: 'Poppins', sans-serif;
 }
+
+@layer utilities {
+  .text-desi-primary {
+    color: #E76F51;
+  }
+  
+  .text-desi-secondary {
+    color: #264653;
+  }
+  
+  .text-desi-accent {
+    color: #F4A261;
+  }
+  
+  .bg-desi-primary {
+    background-color: #E76F51;
+  }
+  
+  .bg-desi-secondary {
+    background-color: #264653;
+  }
+  
+  .bg-desi-accent {
+    background-color: #F4A261;
+  }
+  
+  .bg-desi-accent\/30 {
+    background-color: rgb(244 162 97 / 0.3);
+  }
+  
+  .border-desi-primary {
+    border-color: #E76F51;
+  }
+  
+  .border-desi-secondary {
+    border-color: #264653;
+  }
+  
+  .border-desi-accent {
+    border-color: #F4A261;
+  }
+  
+  .hover\:text-desi-primary:hover {
+    color: #E76F51;
+  }
+  
+  .hover\:text-desi-secondary:hover {
+    color: #264653;
+  }
+  
+  .hover\:text-desi-accent:hover {
+    color: #F4A261;
+  }
+  
+  .hover\:bg-desi-primary:hover {
+    background-color: #E76F51;
+  }
+  
+  .hover\:bg-desi-secondary:hover {
+    background-color: #264653;
+  }
+  
+  .hover\:bg-desi-accent:hover {
+    background-color: #F4A261;
+  }
+  
+  .focus\:border-desi-primary:focus {
+    border-color: #E76F51;
+  }
+  
+  .focus\:border-desi-secondary:focus {
+    border-color: #264653;
+  }
+  
+  .focus\:border-desi-accent:focus {
+    border-color: #F4A261;
+  }
+  
+  .focus\:bg-desi-primary:focus {
+    background-color: #E76F51;
+  }
+  
+  .focus\:bg-desi-secondary:focus {
+    background-color: #264653;
+  }
+  
+  .focus\:bg-desi-accent:focus {
+    background-color: #F4A261;
+  }
+  
+  .focus\:ring-desi-primary:focus {
+    --tw-ring-color: #E76F51;
+  }
+  
+  .focus\:ring-desi-secondary:focus {
+    --tw-ring-color: #264653;
+  }
+  
+  .focus\:ring-desi-accent:focus {
+    --tw-ring-color: #F4A261;
+  }
+  
+  .placeholder\:text-desi-accent::placeholder {
+    color: #F4A261;
+  }
+  
+  .bg-desi-primary\/10 {
+    background-color: rgb(231 111 81 / 0.1);
+  }
+  
+  .bg-desi-accent\/20 {
+    background-color: rgb(244 162 97 / 0.2);
+  }
+  
+  .hover\:border-desi-primary:hover {
+    border-color: #E76F51;
+  }
+  
+  .hover\:border-desi-accent:hover {
+    border-color: #F4A261;
+  }
+  
+  .group:hover .group-hover\:border-desi-primary {
+    border-color: #E76F51;
+  }
+
+  .font-brand {
+    font-family: 'Poppins', sans-serif;
+  }
+}

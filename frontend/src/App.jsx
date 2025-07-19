@@ -19,6 +19,7 @@ import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import { ProfilePage, OrdersPage as CustomerOrdersPage, WishlistPage, SecurityPage } from "./pages/dashboard/PlaceholderPages";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
+import ArtisanShopPage from './pages/ArtisanShopPage';
 
 // --- SELLER PORTAL IMPORTS ---
 import SellerLayout from "./components/layout/SellerLayout";
@@ -72,6 +73,7 @@ function App() {
             </Route>
             <Route path="/products" element={<Products />} />
             <Route path="/products/:id" element={<ProductDetail />} />
+            <Route path="/artisan/:artisanId" element={<ArtisanShopPage />} />
             <Route path="*" element={<CommingSoon />} />
         </Route>
         
