@@ -1,8 +1,16 @@
+/*
+* FILE: frontend/src/components/layout/SellerNavbar.jsx
+*
+* DESCRIPTION:
+* The seller navbar is updated to use the real notification system.
+* - The mock notification data and related logic are removed.
+* - The static notification dropdown is replaced with the live <NotificationBell /> component.
+*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockNotifications } from '../../pages/seller/notifications/mockNotificationData';
+import NotificationBell from '../common/NotificationBell'; // <-- ADDED
 
 // Helper Hook for clicking outside an element
 const useOutsideClick = (ref, callback) => {
@@ -17,30 +25,12 @@ const useOutsideClick = (ref, callback) => {
     }, [ref, callback]);
 };
 
-const NotificationIcon = ({ type }) => {
-    const icons = {
-        new_order: '📋',
-        new_review: '⭐',
-        new_message: '💬',
-        product_approved: '📦',
-        low_stock: '⚠️',
-    };
-    return <span className="text-xl mr-3">{icons[type] || '🔔'}</span>;
-};
-
 const SellerNavbar = ({ toggleSidebar }) => {
     const { user, logout } = useAuth();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
-    const [isNotifOpen, setNotifOpen] = useState(false);
-    
     const profileDropdownRef = useRef(null);
-    const notifDropdownRef = useRef(null);
     
     useOutsideClick(profileDropdownRef, () => setDropdownOpen(false));
-    useOutsideClick(notifDropdownRef, () => setNotifOpen(false));
-    
-    const unreadNotifications = mockNotifications.filter(n => !n.read);
-    const sellerNotificationCount = unreadNotifications.length;
 
     return (
         <header className="bg-white shadow-sm sticky top-0 z-20">
@@ -56,40 +46,9 @@ const SellerNavbar = ({ toggleSidebar }) => {
                     </div>
 
                     <div className="flex items-center space-x-3 sm:space-x-4">
-                        {/* --- Notification Dropdown --- */}
-                        <div className="relative" ref={notifDropdownRef}>
-                            <button onClick={() => setNotifOpen(!isNotifOpen)} className="relative p-2 rounded-full text-gray-500 hover:bg-gray-100" aria-label="View seller notifications">
-                                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a2 2 0 10-4 0v.083A6 6 0 004 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5m8 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                                {sellerNotificationCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white border-2 border-white">{sellerNotificationCount}</span>
-                                )}
-                            </button>
-                            <AnimatePresence>
-                                {isNotifOpen && (
-                                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg p-2 z-50 border">
-                                        <div className="px-2 py-1 font-bold text-gray-800">Notifications</div>
-                                        <ul className="divide-y divide-gray-100 max-h-80 overflow-y-auto">
-                                            {unreadNotifications.length > 0 ? unreadNotifications.slice(0, 4).map(notif => (
-                                                <li key={notif._id}>
-                                                    <Link to={notif.link} onClick={() => setNotifOpen(false)} className="p-2 flex items-start hover:bg-gray-100 rounded-lg">
-                                                        <NotificationIcon type={notif.type} />
-                                                        <div>
-                                                            <p className="text-sm text-gray-700">{notif.message}</p>
-                                                            <p className="text-xs text-gray-400">{new Date(notif.createdAt).toLocaleDateString()}</p>
-                                                        </div>
-                                                    </Link>
-                                                </li>
-                                            )) : <p className="p-4 text-center text-sm text-gray-500">No new notifications.</p>}
-                                        </ul>
-                                        <div className="border-t mt-2 pt-2">
-                                            <Link to="/seller/notifications" onClick={() => setNotifOpen(false)} className="block text-center w-full px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg">
-                                                View All Notifications
-                                            </Link>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                        
+                        {/* --- MODIFIED: Replaced mock dropdown with real NotificationBell --- */}
+                        <NotificationBell role="artisan" />
 
                         {/* --- Profile Dropdown --- */}
                         {user && (
@@ -105,7 +64,7 @@ const SellerNavbar = ({ toggleSidebar }) => {
                                             <div className="py-1">
                                                 <Link to="/seller/dashboard" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Seller Dashboard</Link>
                                                 <Link to="/dashboard/profile" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Customer Account</Link>
-                                                <a href={`/shop/${user._id}`} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">View My Storefront</a>
+                                                <a href={`/artisan/${user._id}`} target="_blank" rel="noopener noreferrer" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">View My Storefront</a>
                                             </div>
                                             <div className="border-t pt-1"><button onClick={logout} className="w-full text-left block px-4 py-2 text-red-600 hover:bg-red-50 rounded">Logout</button></div>
                                         </motion.div>

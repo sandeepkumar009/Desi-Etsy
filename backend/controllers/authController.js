@@ -1,3 +1,12 @@
+/*
+* FILE: backend/controllers/authController.js
+*
+* DESCRIPTION:
+* This file is updated to add a notification trigger upon new user registration.
+* - Imports the 'createNotification' utility.
+* - In 'registerCustomer', after a user is successfully created, it calls
+* 'createNotification' to send a welcome message to the new user.
+*/
 import bcrypt from 'bcryptjs';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
@@ -5,6 +14,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import generateToken from '../utils/generateToken.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
+import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
 
 // POST /api/auth/register - Register a new customer using email and password (Public)
 export const registerCustomer = asyncHandler(async (req, res) => {
@@ -39,6 +49,17 @@ export const registerCustomer = asyncHandler(async (req, res) => {
     const createdUser = await User.findById(user._id).select('-password');
     const token = generateToken(createdUser._id, createdUser.role);
 
+    // --- ADDED: Welcome Notification Trigger ---
+    if (createdUser) {
+        await createNotification(
+            createdUser._id,
+            "Welcome to Desi Etsy! We're excited to have you.",
+            "/dashboard/profile",
+            "customer"
+        );
+    }
+    // -----------------------------------------
+
     return res.status(201).json(
         new ApiResponse(201, { user: createdUser, token }, "Customer registered successfully.")
     );
@@ -67,14 +88,10 @@ export const loginUser = asyncHandler(async (req, res) => {
 });
 
 // GET /api/auth/google/callback - Handle Google OAuth callback and issue JWT (Public)
-// Passport middleware runs first, providing the user object in `req.user`.
-// This controller's job is to issue our own JWT and redirect to the frontend.
 export const googleAuthCallback = asyncHandler(async (req, res) => {
     const user = req.user;
     const token = generateToken(user._id, user.role);
 
-    // Redirect the user to the frontend, passing the token as a query parameter.
-    // The frontend will then read this token from the URL and save it.
     res.redirect(`${process.env.FRONTEND_URL}/auth/callback?token=${token}`);
 });
 

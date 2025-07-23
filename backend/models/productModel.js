@@ -39,7 +39,7 @@ const ProductSchema = new mongoose.Schema({
     // Status managed by admin for approval
     status: {
         type: String,
-        enum: ['pending_approval', 'active', 'inactive', 'rejected'],
+        enum: ['pending_approval', 'active', 'inactive', 'rejected', 'suspended'],
         default: 'pending_approval',
     },
     // Aggregated rating fields, updated by a trigger or middleware after a review is added/updated

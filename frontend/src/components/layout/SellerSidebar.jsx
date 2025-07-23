@@ -1,3 +1,6 @@
+// frontend/src/components/layout/SellerSidebar.jsx
+// This sidebar is now simplified, removing redundant and deprecated links.
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -5,10 +8,8 @@ const sellerNavLinks = [
     { name: 'Dashboard', to: '/seller/dashboard', icon: '📊', protected: false },
     { name: 'Products', to: '/seller/products', icon: '📦', protected: true },
     { name: 'Orders', to: '/seller/orders', icon: '📋', protected: true },
-    { name: 'Messages', to: '/seller/messages', icon: '💬', protected: true },
-    { name: 'Analytics', to: '/seller/analytics', icon: '📈', protected: true },
-    { name: 'Discounts', to: '/seller/discounts', icon: '🏷️', protected: true },
-    { name: 'Settings', to: '/seller/settings', icon: '⚙️', protected: false },
+    { name: 'Payouts', to: '/seller/payouts', icon: '💳', protected: false },
+    { name: 'Notifications', to: '/seller/notifications', icon: '🔔', protected: true },
 ];
 
 const SellerSidebar = ({ isOpen, setIsOpen, isApproved }) => {
