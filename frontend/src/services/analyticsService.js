@@ -11,3 +11,13 @@ export const getAnalytics = async (timePeriod = '30d') => {
         throw error.response?.data || { message: "An unknown error occurred" };
     }
 };
+
+export const getAdminSummary = async () => {
+    try {
+        const response = await api.get('/analytics/summary');
+        return response.data.data;
+    } catch (error) {
+        console.error('Error fetching admin dashboard summary:', error);
+        throw error.response?.data || { message: "An unknown error occurred" };
+    }
+};

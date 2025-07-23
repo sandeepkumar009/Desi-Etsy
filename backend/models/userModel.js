@@ -1,8 +1,20 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-// This model serves all roles: customer, artisan, and admin.
-// The 'role' field differentiates them, and the 'artisanProfile' sub-document
+const CartItemSchema = new mongoose.Schema({
+    productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true,
+    },
+    quantity: {
+        type: Number,
+        required: true,
+        min: 1,
+        default: 1,
+    },
+});
+
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -46,6 +58,7 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
     }],
+    cart: [CartItemSchema],
     addresses: [{
         addressLine1: { type: String, required: true },
         addressLine2: { type: String },
@@ -72,8 +85,10 @@ const UserSchema = new mongoose.Schema({
             },
             // Placeholder for payout information
             payoutInfo: {
-                bankAccountNumber: String,
-                ifscCode: String,
+                accountHolderName: { type: String, trim: true, default: '' },
+                accountNumber: { type: String, trim: true, default: '' },
+                ifscCode: { type: String, trim: true, default: '' },
+                bankName: { type: String, trim: true, default: '' },
             },
         },
         // This sub-document is only required if the role is 'artisan'

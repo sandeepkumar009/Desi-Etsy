@@ -1,14 +1,20 @@
+/*
+* FILE: frontend/src/components/layout/Navbar.jsx
+*
+* DESCRIPTION:
+* The main customer-facing navbar is updated to use the real notification system.
+* - The mock `useNotifications` hook is removed.
+* - The static notification icon is replaced with the dynamic <NotificationBell /> component.
+* This will now display live notification data for logged-in customers.
+*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../hooks/useAuth';
+import { useCart } from '../../hooks/useCart';
+import CartPanel from '../cart/CartPanel';
 import { getAllCategories } from '../../services/productService';
-
-// MOCK HOOKS for features not yet implemented
-const useNotifications = () => ({ notificationCount: 5 });
-const useCart = () => ({ cartItemCount: 3 });
-// END MOCK HOOKS
-
+import NotificationBell from '../common/NotificationBell'; // <-- ADDED
 
 // Helper Hook for clicking outside an element
 const useOutsideClick = (ref, callback) => {
@@ -96,14 +102,14 @@ const AuthDropdown = ({ user, onLogout }) => {
               <Link to="/dashboard/orders" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">My Orders</Link>
               <Link to="/dashboard/wishlist" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Wishlist</Link>
               
-              {user.role === 'customer' && (
-                <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Become a Seller</Link>
+              {user.role === 'admin' && (
+                 <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin Panel</Link>
               )}
               {user.role === 'artisan' && (
                  <Link to="/seller/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Seller Dashboard</Link>
               )}
-               {user.role === 'admin' && (
-                 <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Admin Panel</Link>
+              {user.role === 'customer' && (
+                <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded">Become a Seller</Link>
               )}
             </div>
             <div className="border-t pt-1">
@@ -152,9 +158,13 @@ const MobileMenu = ({ isOpen, setIsOpen, user, onLogout }) => {
                         <Link to="/" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Home</Link>
                         <Link to="/products" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Products</Link>
                         
-                        {user && user.role === 'artisan' ? (
+                        {user?.role === 'admin' && (
+                            <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Admin Panel</Link>
+                        )}
+                        {user?.role === 'artisan' && (
                             <Link to="/seller/dashboard" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Seller Dashboard</Link>
-                        ) : (
+                        )}
+                         {user?.role === 'customer' && (
                             <Link to="/apply-artisan" onClick={() => setIsOpen(false)} className="py-3 text-lg font-medium text-desi-secondary hover:text-desi-primary">Become a Seller</Link>
                         )}
 
@@ -198,14 +208,9 @@ const UniversalSearch = ({ isMobile = false }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // **FIX**: Navigate using URL search parameters for robust filtering
         const params = new URLSearchParams();
-        if (searchTerm) {
-            params.set('search', searchTerm);
-        }
-        if (selectedCategory.id) {
-            params.set('category', selectedCategory.id);
-        }
+        if (searchTerm) params.set('search', searchTerm);
+        if (selectedCategory.id) params.set('category', selectedCategory.id);
         navigate(`/products?${params.toString()}`);
     };
 
@@ -214,7 +219,6 @@ const UniversalSearch = ({ isMobile = false }) => {
             <form onSubmit={handleSubmit}>
                 <div className={`flex items-center border border-gray-300 rounded-full shadow-sm bg-gray-50 focus-within:ring-2 focus-within:ring-orange-400 ${isMobile ? 'shadow-md' : ''}`}>
                     <div className="relative" ref={categoryDropdownRef}>
-                        {/* **FIX**: Added CSS to prevent text wrapping and handle overflow */}
                         <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} type="button" className="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-600 bg-gray-100 border-r border-gray-300 rounded-l-full hover:bg-gray-200 max-w-[150px]">
                             <span className="truncate whitespace-nowrap">{selectedCategory.name}</span>
                             <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6"><path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/></svg>
@@ -254,15 +258,41 @@ const UniversalSearch = ({ isMobile = false }) => {
     );
 };
 
+const HeartIcon = () => <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.5l1.318-1.182a4.5 4.5 0 116.364 6.364L12 20.364l-7.682-7.682a4.5 4.5 0 010-6.364z"></path></svg>;
 
-// Main Navbar Component
+const RoleBasedLink = ({ user }) => {
+    if (!user) {
+        return <NavLink to="/apply-artisan">Become a Seller</NavLink>;
+    }
+
+    switch (user.role) {
+        case 'admin':
+            return (
+                <Link to="/admin/dashboard" className="px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center gap-2 bg-admin-accent text-white hover:bg-admin-accent-dark">
+                    Admin Panel
+                </Link>
+            );
+        case 'artisan':
+            return (
+                <Link to="/seller/dashboard" className="px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center gap-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200">
+                    Seller Dashboard
+                </Link>
+            );
+        case 'customer':
+        default:
+            return <NavLink to="/apply-artisan">Become a Seller</NavLink>;
+    }
+};
+
+
 const Navbar = () => {
   const { user, logout } = useAuth();
-  const { notificationCount } = useNotifications();
-  const { cartItemCount } = useCart();
+  const { cartCount, setIsCartOpen } = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
+  const wishlistCount = user?.wishlist?.length || 0;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -291,35 +321,32 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-            {user && user.role === 'artisan' ? (
-                <Link to="/seller/dashboard" className="px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors duration-200 flex items-center gap-2 bg-indigo-100 text-indigo-600 hover:bg-indigo-200">
-                    Seller Dashboard
-                </Link>
-            ) : (
-                <NavLink to="/apply-artisan">Become a Seller</NavLink>
-            )}
+            <RoleBasedLink user={user} />
             
-            <NavLink to="/notifications" className="p-2 rounded-full">
+            {/* --- MODIFIED: Replaced mock icon with real NotificationBell --- */}
+            {user && <NotificationBell role="customer" />}
+
+            <NavLink to="/dashboard/wishlist" className="p-2 rounded-full">
               <div className="relative">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-5-5.917V5a2 2 0 10-4 0v.083A6 6 0 004 11v3.159c0 .538-.214 1.055-.595 1.436L2 17h5m8 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                {notificationCount > 0 && (
+                <HeartIcon />
+                {wishlistCount > 0 && (
                   <span className="absolute -top-1 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white border-2 border-white">
-                    {notificationCount}
+                    {wishlistCount}
                   </span>
                 )}
               </div>
             </NavLink>
 
-            <NavLink to="/cart" className="p-2 rounded-full">
+            <button onClick={() => setIsCartOpen(true)} className="p-2 rounded-full relative text-gray-600 hover:bg-gray-100">
                <div className="relative">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                  {cartItemCount > 0 && (
+                  {cartCount > 0 && (
                       <span className="absolute -top-1 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white border-2 border-white">
-                          {cartItemCount}
+                          {cartCount}
                       </span>
                   )}
                </div>
-            </NavLink>
+            </button>
 
             <div className="h-8 w-px bg-gray-200 mx-2"></div>
             <AuthDropdown user={user} onLogout={logout} />
@@ -351,6 +378,7 @@ const Navbar = () => {
       </header>
       
       <MobileMenu isOpen={menuOpen} setIsOpen={setMenuOpen} user={user} onLogout={logout} />
+      <CartPanel /> 
     </>
   );
 };

@@ -1,3 +1,6 @@
+// frontend/src/pages/seller/orders/OrderDetailView.jsx
+// This file is updated to correctly display the order history log for the artisan.
+
 import React, { useState } from 'react';
 import Button from '../../../components/common/Button';
 import { ProductDetailModal, CancelOrderModal, ShipOrderModal } from './OrderModals';
@@ -6,12 +9,13 @@ const OrderStatusTimeline = ({ history }) => (
     <div className="mt-4">
         <h4 className="text-md font-semibold text-gray-600 mb-3">Order History</h4>
         <ol className="relative border-l-2 border-indigo-200">
-            {history.map((event, index) => (
+            {/* **DISPLAY FIX:** Reverse the array to show newest events first */}
+            {[...history].reverse().map((event, index) => (
                 <li key={index} className="mb-8 ml-6">
                     <span className="absolute flex items-center justify-center w-6 h-6 bg-indigo-200 rounded-full -left-3 ring-8 ring-white">
                         <svg className="w-3 h-3 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd"></path></svg>
                     </span>
-                    <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900 capitalize">{event.status.replace('_', ' ')}</h3>
+                    <h3 className="flex items-center mb-1 text-lg font-semibold text-gray-900 capitalize">{event.status.replace(/_/g, ' ')}</h3>
                     <time className="block mb-2 text-sm font-normal leading-none text-gray-400">{new Date(event.updatedAt).toLocaleString()}</time>
                     {event.details && <p className="text-sm text-gray-600">{event.details}</p>}
                 </li>
@@ -56,7 +60,8 @@ const OrderDetailView = ({ order, onBack, onStatusUpdate }) => {
             case 'delivered': return 'bg-green-100 text-green-800';
             case 'shipped': return 'bg-indigo-100 text-indigo-800';
             case 'packed': return 'bg-blue-100 text-blue-800';
-            case 'processing': case 'paid': return 'bg-yellow-100 text-yellow-800';
+            case 'processing': return 'bg-yellow-100 text-yellow-800';
+            case 'paid': return 'bg-cyan-100 text-cyan-800';
             case 'cancelled': return 'bg-red-100 text-red-800';
             default: return 'bg-gray-100 text-gray-800';
         }
@@ -93,7 +98,7 @@ const OrderDetailView = ({ order, onBack, onStatusUpdate }) => {
                             <h2 className="text-2xl font-bold text-gray-800">Order #...{order._id.slice(-6)}</h2>
                             <p className="text-sm text-gray-500">Placed on: {new Date(order.createdAt).toLocaleString()}</p>
                         </div>
-                        <span className={`px-3 py-1 text-sm font-semibold rounded-full capitalize ${getStatusPillStyle(order.status)}`}>{order.status.replace('_', ' ')}</span>
+                        <span className={`px-3 py-1 text-sm font-semibold rounded-full capitalize ${getStatusPillStyle(order.status)}`}>{order.status.replace(/_/g, ' ')}</span>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">

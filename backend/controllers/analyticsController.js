@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
+import User from '../models/userModel.js'; // Import User model
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import mongoose from 'mongoose';
@@ -97,4 +98,63 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
     };
 
     res.status(200).json(new ApiResponse(200, analytics, 'Analytics data fetched successfully.'));
+});
+
+// --- NEW: Controller for Admin Dashboard Summary ---
+export const getAdminDashboardSummary = asyncHandler(async (req, res) => {
+    // --- 1. Define date ranges ---
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // --- 2. Perform all database queries in parallel for efficiency ---
+    const [
+        totalRevenueResult,
+        totalOrders,
+        newUsersCount,
+        activeArtisansCount,
+        pendingArtisansCount,
+        pendingProductsCount,
+        latestOrders,
+        recentUsers
+    ] = await Promise.all([
+        // Calculate total revenue from delivered orders
+        Order.aggregate([
+            { $match: { status: 'delivered' } },
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+        ]),
+        // Get total number of all orders
+        Order.countDocuments(),
+        // Get number of users registered in the last 30 days
+        User.countDocuments({ createdAt: { $gte: thirtyDaysAgo } }),
+        // Get number of approved artisans
+        User.countDocuments({ role: 'artisan', 'artisanProfile.status': 'approved' }),
+        // Get number of pending artisan applications
+        User.countDocuments({ role: 'artisan', 'artisanProfile.status': 'pending' }),
+        // Get number of pending product approvals
+        Product.countDocuments({ status: 'pending_approval' }),
+        // Get the 5 most recent orders
+        Order.find().sort({ createdAt: -1 }).limit(5).populate('userId', 'name'),
+        // Get the 5 most recently registered users
+        User.find().sort({ createdAt: -1 }).limit(5).select('name email role createdAt')
+    ]);
+
+    // --- 3. Format the data for the response ---
+    const summary = {
+        keyMetrics: {
+            totalRevenue: totalRevenueResult[0]?.total || 0,
+            totalOrders: totalOrders,
+            newUsersLast30Days: newUsersCount,
+            activeArtisans: activeArtisansCount,
+        },
+        actionItems: {
+            pendingArtisans: pendingArtisansCount,
+            pendingProducts: pendingProductsCount,
+        },
+        recentActivity: {
+            latestOrders,
+            recentUsers,
+        },
+    };
+
+    res.status(200).json(new ApiResponse(200, summary, 'Admin dashboard summary fetched successfully.'));
 });
