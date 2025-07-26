@@ -1,6 +1,3 @@
-// frontend/src/pages/seller/PayoutsPage.jsx
-// This is the new, enhanced payouts page for artisans.
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { getMyPayoutInfo, updateMyPayoutInfo, getMyPayoutSummary, getMyPayoutHistory } from '../../services/artisanService';

@@ -4,8 +4,7 @@ import { getAllArtisansByStatus, updateArtisanStatus } from '../../services/arti
 import Loader from '../../components/common/Loader';
 import Modal from '../../components/common/Modal';
 
-// --- Reusable UI Components ---
-
+// Reusable UI Components
 const StatusBadge = ({ status }) => {
     const statusStyles = {
         pending: 'bg-yellow-100 text-yellow-800',
@@ -20,7 +19,7 @@ const StatusBadge = ({ status }) => {
     );
 };
 
-// --- Modal for Viewing Artisan Details ---
+// Modal for Viewing Artisan Details
 const ArtisanDetailModal = ({isDetailModalOpen, artisan, onClose }) => {
     if (!artisan) return null;
     return (
@@ -51,7 +50,7 @@ const ArtisanDetailModal = ({isDetailModalOpen, artisan, onClose }) => {
 };
 
 
-// --- Main Page Component ---
+// Main Page Component
 const ArtisanVerificationPage = () => {
     const [artisans, setArtisans] = useState([]);
     const [loading, setLoading] = useState(true);

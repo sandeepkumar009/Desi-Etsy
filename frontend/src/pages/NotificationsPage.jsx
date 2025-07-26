@@ -1,14 +1,3 @@
-/*
-* FILE: frontend/src/pages/NotificationsPage.jsx
-*
-* DESCRIPTION:
-* This file is updated to make the "Mark all as read" functionality role-specific.
-* - A new "Mark all as read" button is added to the page header.
-* - This button is only visible if there are unread notifications for the current role.
-* - The onClick handler for this button now correctly calls `markAllAsRead(role)`,
-* passing the role determined from the URL. This ensures only the notifications
-* for the current view (customer, artisan, or admin) are marked as read.
-*/
 import React, { useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useNotifications } from '../context/NotificationContext';
@@ -21,7 +10,7 @@ const NotificationsPage = () => {
         artisanNotifications, 
         adminNotifications, 
         markAsRead,
-        markAllAsRead // <-- Import the function
+        markAllAsRead
     } = useNotifications();
     const navigate = useNavigate();
     const location = useLocation();
@@ -58,8 +47,7 @@ const NotificationsPage = () => {
                             Stay updated with all recent activities for your {role} account.
                         </p>
                     </div>
-                    {/* --- ADDED: Role-specific "Mark all as read" button --- */}
-                    {unreadNotifications.length > 0 && (
+\                    {unreadNotifications.length > 0 && (
                          <button 
                             onClick={() => markAllAsRead(role)}
                             className="px-4 py-2 bg-blue-100 text-blue-700 font-semibold text-sm rounded-lg hover:bg-blue-200 transition-colors"

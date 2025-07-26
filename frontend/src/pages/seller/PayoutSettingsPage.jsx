@@ -1,6 +1,3 @@
-// frontend/src/pages/seller/PayoutSettingsPage.jsx
-// This is a new page for artisans to manage their bank details.
-
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { getMyPayoutInfo, updateMyPayoutInfo } from '../../services/artisanService';

@@ -1,6 +1,3 @@
-// frontend/src/components/layout/SellerSidebar.jsx
-// This sidebar is now simplified, removing redundant and deprecated links.
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 

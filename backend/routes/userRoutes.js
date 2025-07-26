@@ -21,7 +21,7 @@ router.route('/profile')
     .get(protect, getUserProfile)
     .put(protect, upload.single('profilePicture'), updateUserProfile);
     
-// --- NEW: Password Change Route ---
+// Password Change Route
 router.put('/profile/change-password', protect, updatePassword);
 
 // Address Routes

@@ -21,7 +21,7 @@ router.delete('/:id', protect, authorize('artisan'), deleteProduct);
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
-// --- NEW: Admin Routes ---
+// Admin Routes
 router.get('/admin/all', protect, authorize('admin'), getProductsForAdmin);
 router.patch('/admin/status/:id', protect, authorize('admin'), updateProductStatus);
 

@@ -1,6 +1,3 @@
-// frontend/src/components/layout/AdminSidebar.jsx
-// Adding a new link for Payout Management.
-
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
@@ -8,8 +5,8 @@ const adminNavLinks = [
     { name: 'Dashboard', to: '/admin/dashboard', icon: '👑' },
     { name: 'Artisan Verification', to: '/admin/artisan-verification', icon: '✅' },
     { name: 'Product Approval', to: '/admin/product-approval', icon: '📦' },
-    { name: 'Payout Management', to: '/admin/payouts', icon: '💸' }, // **NEW**
     { name: 'Category Management', to: '/admin/categories', icon: '🏷️' },
+    { name: 'Payout Management', to: '/admin/payouts', icon: '💸' },
     { name: 'Notifications', to: '/admin/notifications', icon: '🔔' },
 ];
 

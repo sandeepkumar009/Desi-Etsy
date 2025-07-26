@@ -10,7 +10,7 @@ const StatusBadge = ({ status }) => {
         active: 'bg-green-100 text-green-800',
         rejected: 'bg-red-100 text-red-800',
         inactive: 'bg-gray-100 text-gray-800',
-        suspended: 'bg-purple-100 text-purple-800', // Add this line
+        suspended: 'bg-purple-100 text-purple-800',
     };
     return (
         <span className={`px-3 py-1 text-xs font-medium rounded-full ${statusStyles[status] || 'bg-gray-200'}`}>
@@ -53,7 +53,7 @@ const ProductApprovalPage = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
-    const [actionType, setActionType] = useState(''); // 'active', 'rejected'
+    const [actionType, setActionType] = useState(''); 
 
     const fetchProducts = useCallback(async () => {
         try {
@@ -114,7 +114,7 @@ const ProductApprovalPage = () => {
                         <option value="all">All</option>
                         <option value="pending_approval">Pending Approval</option>
                         <option value="active">Active</option>
-                        <option value="suspended">Suspended</option> {/* Add this line */}
+                        <option value="suspended">Suspended</option>
                         <option value="rejected">Rejected</option>
                         <option value="inactive">Inactive</option>
                     </select>

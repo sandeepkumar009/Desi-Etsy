@@ -1,20 +1,15 @@
-// frontend/src/services/orderService.js
-// Adding the new functions to call our checkout endpoints.
-
 import api from './api';
 
-// --- NEW CHECKOUT FUNCTIONS ---
 export const createOrder = async (orderData) => {
     try {
         const response = await api.post('/orders/create', orderData);
-        return response.data; // Includes success flag, data, and message
+        return response.data;
     } catch (error) {
         console.error("Error creating order:", error);
         throw error.response?.data || { message: "An unknown error occurred" };
     }
 };
 
-// **NEW**
 export const createDirectOrder = async (orderData) => {
     try {
         const response = await api.post('/orders/buy-now', orderData);
@@ -36,7 +31,7 @@ export const verifyPayment = async (paymentData) => {
 };
 
 
-// --- EXISTING FUNCTIONS ---
+// artisan
 export const getArtisanOrders = async () => {
     try {
         const response = await api.get('/orders/my-orders');

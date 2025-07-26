@@ -1,6 +1,3 @@
-// backend/routes/payoutRoutes.js
-// This new file defines the API endpoints for payout management.
-
 import express from 'express';
 import { getPayoutSummary, recordPayout } from '../controllers/payoutController.js';
 import { protect, authorize } from '../middlewares/authMiddleware.js';

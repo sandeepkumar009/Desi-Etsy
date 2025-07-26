@@ -4,7 +4,7 @@ import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import * as productService from '../../../services/productService';
 
-// --- View Product Component ---
+// View Product Component
 export const ViewProduct = ({ product, onBack }) => {
     if (!product) return null;
 
@@ -63,7 +63,7 @@ export const ViewProduct = ({ product, onBack }) => {
 };
 
 
-// --- Edit Product Component ---
+// Edit Product Component
 export const EditProduct = ({ product, onBack, onSuccess }) => {
     const [formData, setFormData] = useState({ name: '', description: '', price: '', category: '', stock: '', tags: '' });
     const [productImage, setProductImage] = useState(null);
@@ -153,7 +153,6 @@ export const EditProduct = ({ product, onBack, onSuccess }) => {
                     <Input label="Price (₹)" type="number" name="price" value={formData.price} onChange={handleChange} min="0" required />
                      <div>
                         <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-                        {/* FIX: Added consistent styling to the select element */}
                         <select id="category" name="category" value={formData.category} onChange={handleChange} required className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                             <option value="">Select a category</option>
                             {categories.map(cat => (

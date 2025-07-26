@@ -1,6 +1,3 @@
-// backend/models/payoutModel.js
-// This is a new model to keep a record of every payout transaction.
-
 import mongoose from 'mongoose';
 
 const PayoutSchema = new mongoose.Schema({
@@ -28,7 +25,6 @@ const PayoutSchema = new mongoose.Schema({
         enum: ['completed', 'failed'],
         default: 'completed',
     },
-    // Optional field for the admin to add a reference/transaction ID from their bank
     transactionReference: {
         type: String,
     },

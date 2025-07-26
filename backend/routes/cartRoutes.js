@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.use(protect); // All routes in this file are protected
+router.use(protect);
 
 router.route('/')
     .get(getCart)

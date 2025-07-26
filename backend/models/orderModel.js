@@ -1,6 +1,3 @@
-// backend/models/orderModel.js
-// We'll update the paymentDetails to be more specific for Razorpay.
-
 import mongoose from 'mongoose';
 
 const OrderSchema = new mongoose.Schema({
@@ -51,7 +48,6 @@ const OrderSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    // **NEW:** Payout tracking fields
     payoutStatus: {
         type: String,
         enum: ['pending', 'paid'],

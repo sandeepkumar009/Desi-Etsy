@@ -83,7 +83,6 @@ const UserSchema = new mongoose.Schema({
                 enum: ['pending', 'approved', 'rejected', 'suspended'],
                 default: 'pending',
             },
-            // Placeholder for payout information
             payoutInfo: {
                 accountHolderName: { type: String, trim: true, default: '' },
                 accountNumber: { type: String, trim: true, default: '' },

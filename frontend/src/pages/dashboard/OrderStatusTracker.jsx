@@ -12,7 +12,6 @@ const statusConfig = {
 };
 
 const OrderStatusTracker = ({ history, currentStatus }) => {
-    // The history is naturally sorted newest-first from the backend, so we reverse it for chronological display.
     const chronologicalHistory = [...history].reverse();
 
     return (

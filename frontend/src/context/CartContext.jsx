@@ -1,6 +1,3 @@
-// frontend/src/context/CartContext.jsx
-// Adding a clearCart function.
-
 import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 import * as cartService from '../services/cartService';
 import { useAuth } from '../hooks/useAuth';
@@ -99,13 +96,11 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // --- NEW FUNCTION ---
     const clearCart = () => {
         setCartItems([]);
         if (!user) {
             localStorage.removeItem('cart');
         }
-        // The cart will be cleared on the server automatically during order creation
     };
 
     const cartCount = useMemo(() => cartItems.reduce((acc, item) => acc + item.quantity, 0), [cartItems]);

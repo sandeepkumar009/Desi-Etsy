@@ -1,12 +1,3 @@
-/*
-* FILE: backend/controllers/authController.js
-*
-* DESCRIPTION:
-* This file is updated to add a notification trigger upon new user registration.
-* - Imports the 'createNotification' utility.
-* - In 'registerCustomer', after a user is successfully created, it calls
-* 'createNotification' to send a welcome message to the new user.
-*/
 import bcrypt from 'bcryptjs';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
@@ -14,7 +5,7 @@ import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import generateToken from '../utils/generateToken.js';
 import { uploadOnCloudinary } from '../utils/cloudinary.js';
-import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
+import { createNotification } from '../utils/notificationUtils.js';
 
 // POST /api/auth/register - Register a new customer using email and password (Public)
 export const registerCustomer = asyncHandler(async (req, res) => {
@@ -49,7 +40,7 @@ export const registerCustomer = asyncHandler(async (req, res) => {
     const createdUser = await User.findById(user._id).select('-password');
     const token = generateToken(createdUser._id, createdUser.role);
 
-    // --- ADDED: Welcome Notification Trigger ---
+    // Welcome Notification Trigger ---
     if (createdUser) {
         await createNotification(
             createdUser._id,
@@ -58,7 +49,6 @@ export const registerCustomer = asyncHandler(async (req, res) => {
             "customer"
         );
     }
-    // -----------------------------------------
 
     return res.status(201).json(
         new ApiResponse(201, { user: createdUser, token }, "Customer registered successfully.")

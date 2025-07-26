@@ -1,23 +1,11 @@
-/*
-* FILE: backend/controllers/productController.js
-*
-* DESCRIPTION:
-* This file is updated to add notification triggers for product management.
-* - Imports 'createNotification' utility and the 'User' model.
-* - In 'createProduct', it notifies all admins when a new product is submitted
-* for approval.
-* - In 'updateProductStatus', it notifies the artisan when an admin changes
-* the status of their product.
-*/
 import Product from '../models/productModel.js';
-import User from '../models/userModel.js'; // <-- ADDED
+import User from '../models/userModel.js'; 
 import { uploadOnCloudinary, deleteFromCloudinary } from '../utils/cloudinary.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import mongoose from 'mongoose';
-import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
+import { createNotification } from '../utils/notificationUtils.js'; 
 
-// ... (getAllProducts remains unchanged)
 export const getAllProducts = async (req, res, next) => {
   try {
     const { page = 1, limit = 12, search = '', category, minPrice, maxPrice, rating, sort = 'createdAt', order = 'desc', artisanId } = req.query;
@@ -55,7 +43,6 @@ export const getAllProducts = async (req, res, next) => {
     next(err);
   }
 };
-// ---
 
 export const createProduct = async (req, res, next) => {
   try {
@@ -72,10 +59,8 @@ export const createProduct = async (req, res, next) => {
       category,
       stock,
       tags: tags ? tags.split(',') : []
-      // status defaults to 'pending' from the model
     });
 
-    // --- ADDED: Notify Admins Trigger ---
     const admins = await User.find({ role: 'admin' });
     for (const admin of admins) {
         await createNotification(
@@ -85,7 +70,6 @@ export const createProduct = async (req, res, next) => {
             'admin'
         );
     }
-    // ------------------------------------
 
     res.status(201).json(new ApiResponse(201, product, 'Product created successfully and is pending review.'));
   } catch (err) {
@@ -93,7 +77,6 @@ export const createProduct = async (req, res, next) => {
   }
 };
 
-// ... (getMyProducts, updateProduct, deleteProduct, getProductById, getProductsForAdmin remain unchanged)
 export const getMyProducts = async (req, res, next) => {
   try {
     const products = await Product.find({ artisanId: req.user._id }).populate('category', 'name');
@@ -102,6 +85,7 @@ export const getMyProducts = async (req, res, next) => {
     next(err);
   }
 };
+
 export const updateProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -125,6 +109,7 @@ export const updateProduct = async (req, res, next) => {
     next(err);
   }
 };
+
 export const deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -139,6 +124,7 @@ export const deleteProduct = async (req, res, next) => {
     next(err);
   }
 };
+
 export const getProductById = async (req, res, next) => {
   try {
     const product = await Product.findOne({ _id: req.params.id, status: 'active' })
@@ -150,6 +136,7 @@ export const getProductById = async (req, res, next) => {
     next(err);
   }
 };
+
 export const getProductsForAdmin = async (req, res, next) => {
   try {
     const { status = 'all' } = req.query;
@@ -166,13 +153,7 @@ export const getProductsForAdmin = async (req, res, next) => {
     next(err);
   }
 };
-// ---
 
-/**
- * @desc    Update a product's status (approve, reject)
- * @route   PATCH /api/products/admin/status/:id
- * @access  Private/Admin
- */
 export const updateProductStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -190,7 +171,6 @@ export const updateProductStatus = async (req, res, next) => {
     product.status = status;
     await product.save();
 
-    // --- ADDED: Notify Artisan Trigger ---
     const statusMessage = status.charAt(0).toUpperCase() + status.slice(1);
     await createNotification(
         product.artisanId,
@@ -198,7 +178,6 @@ export const updateProductStatus = async (req, res, next) => {
         `/seller/products`,
         'artisan'
     );
-    // ------------------------------------
 
     res.status(200).json(new ApiResponse(200, product, `Product has been ${status}.`));
   } catch (err) {

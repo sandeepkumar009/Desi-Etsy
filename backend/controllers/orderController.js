@@ -1,14 +1,3 @@
-/*
-* FILE: backend/controllers/orderController.js
-*
-* DESCRIPTION:
-* This file is updated to add notification triggers for the order process.
-* - Imports the 'createNotification' utility.
-* - In 'createDirectOrder' and 'createOrder', it notifies the customer upon
-* order placement and also notifies the relevant artisan(s) of the new order.
-* - In 'updateOrderStatus', it notifies the customer when an artisan updates
-* the status of their order.
-*/
 import Order from '../models/orderModel.js';
 import User from '../models/userModel.js';
 import Product from '../models/productModel.js';
@@ -17,9 +6,8 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import { instance as razorpayInstance } from '../config/razorpay.js';
-import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
+import { createNotification } from '../utils/notificationUtils.js';
 
-// --- NEW "BUY NOW" CONTROLLER ---
 export const createDirectOrder = async (req, res, next) => {
     try {
         const { productId, quantity, shippingAddress, paymentMethod } = req.body;
@@ -53,10 +41,8 @@ export const createDirectOrder = async (req, res, next) => {
             });
             const savedOrder = await newOrder.save();
 
-            // --- ADDED: Notification Triggers ---
             await createNotification(userId, `Your order for '${product.name}' has been placed!`, `/dashboard/orders/${savedOrder._id}`, 'customer');
             await createNotification(product.artisanId, `You have a new order for '${product.name}'.`, `/seller/orders`, 'artisan');
-            // ------------------------------------
 
             return res.status(201).json(new ApiResponse(201, { orderGroupId }, 'Direct order placed successfully with COD'));
         }
@@ -80,7 +66,6 @@ export const createDirectOrder = async (req, res, next) => {
     }
 };
 
-// --- CHECKOUT CONTROLLERS ---
 export const createOrder = async (req, res, next) => {
     try {
         const { shippingAddress, paymentMethod } = req.body;
@@ -119,10 +104,8 @@ export const createOrder = async (req, res, next) => {
                 });
                 const savedOrder = await newOrder.save();
 
-                // --- ADDED: Artisan Notification ---
                 await createNotification(artisanId, `You have a new order (#${orderGroupId.slice(-6)}).`, `/seller/orders`, 'artisan');
             }
-            // --- ADDED: Customer Notification ---
             await createNotification(userId, `Your order group #${orderGroupId.slice(-6)} has been placed!`, `/dashboard/orders`, 'customer');
             
             user.cart = [];
@@ -154,7 +137,7 @@ export const createOrder = async (req, res, next) => {
     }
 };
 
-// ... (verifyPayment remains unchanged)
+// (verifyPayment remains unchanged)
 export const verifyPayment = async (req, res, next) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
@@ -181,16 +164,14 @@ export const verifyPayment = async (req, res, next) => {
             const orders = await Order.find({'paymentDetails.razorpay_order_id': razorpay_order_id});
             const orderGroupId = orders.length > 0 ? orders[0].orderGroupId : null;
             
-            // --- ADDED: Notification Triggers on Successful Payment ---
             if (orders.length > 0) {
                 const customerId = orders[0].userId;
                 await createNotification(customerId, `Payment successful for order group #${orderGroupId.slice(-6)}.`, `/dashboard/orders`, 'customer');
                 for (const order of orders) {
-                    const artisanId = order.items[0].artisanId; // Assuming one artisan per order
+                    const artisanId = order.items[0].artisanId;
                     await createNotification(artisanId, `You have a new paid order (#${orderGroupId.slice(-6)}).`, `/seller/orders`, 'artisan');
                 }
             }
-            // ---------------------------------------------------------
 
             res.status(200).json(new ApiResponse(200, { orderGroupId }, 'Payment verified successfully'));
         } else {
@@ -234,7 +215,6 @@ export const updateOrderStatus = async (req, res, next) => {
         order.statusHistory.push(historyEntry);
         await order.save();
 
-        // --- ADDED: Customer Notification Trigger ---
         const statusMessage = status.charAt(0).toUpperCase() + status.slice(1);
         await createNotification(
             order.userId,
@@ -242,15 +222,13 @@ export const updateOrderStatus = async (req, res, next) => {
             `/dashboard/orders/${order._id}`,
             'customer'
         );
-        // ------------------------------------------
-
+        
         res.status(200).json(new ApiResponse(200, order, 'Order status updated successfully.'));
     } catch (err) {
         next(err);
     }
 };
 
-// --- EXISTING CONTROLLERS (No changes needed) ---
 export const getArtisanOrders = async (req, res, next) => {
     try {
         const artisanId = req.user._id;
@@ -267,6 +245,7 @@ export const getArtisanOrders = async (req, res, next) => {
         next(err);
     }
 };
+
 export const getCustomerOrders = async (req, res, next) => {
     try {
         const userId = req.user._id;
@@ -276,6 +255,7 @@ export const getCustomerOrders = async (req, res, next) => {
         next(err);
     }
 };
+
 export const getCustomerOrderDetail = async (req, res, next) => {
     try {
         const userId = req.user._id;
@@ -288,6 +268,7 @@ export const getCustomerOrderDetail = async (req, res, next) => {
         next(err);
     }
 };
+
 export const checkUserPurchase = async (req, res, next) => {
     try {
         const userId = req.user._id;

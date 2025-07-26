@@ -1,11 +1,3 @@
-/*
-* FILE: frontend/src/context/NotificationContext.jsx
-*
-* DESCRIPTION:
-* The `markAllAsRead` function is updated to correctly pass the 'role'
-* to the notification service. This ensures the frontend request aligns
-* with the new backend requirement for role-specific updates.
-*/
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../hooks/useAuth';
@@ -77,7 +69,6 @@ export const NotificationProvider = ({ children }) => {
         if (unreadIds.length === 0) return;
 
         try {
-            // --- MODIFIED: Pass the role to the service ---
             await notificationService.markAllNotificationsAsRead(role);
             setNotifications(prev =>
                 prev.map(n => (n.role === role ? { ...n, isRead: true } : n))

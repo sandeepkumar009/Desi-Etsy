@@ -32,7 +32,6 @@ export default function Sidebar() {
     const { user } = useAuth();
 
     if (!user) {
-        // This should ideally be handled by the ProtectedRoute, but as a fallback:
         return <div>Loading user data...</div>;
     }
 
@@ -50,13 +49,6 @@ export default function Sidebar() {
                                     <span>{link.name}</span>
                                 </DashboardNavLink>
                             ))}
-                            {/* === UPDATED: The 'artisan' role link has been removed from here === */}
-                             {user.role === 'admin' && (
-                                <DashboardNavLink to="/admin/dashboard">
-                                    <span className="text-xl">⚙️</span>
-                                    <span>Admin Panel</span>
-                                </DashboardNavLink>
-                            )}
                         </nav>
                     </div>
                 </aside>
@@ -64,7 +56,6 @@ export default function Sidebar() {
                 {/* Main Content Area */}
                 <main className="md:col-span-3">
                     <div className="bg-white p-6 md:p-8 rounded-xl shadow-md min-h-[400px]">
-                        {/* The Outlet will render the nested route's component */}
                         <Outlet />
                     </div>
                 </main>

@@ -31,21 +31,14 @@ const SellerLayout = () => {
     // This function determines which component to render in the main content area.
     const renderContent = () => {
         if (isApproved) {
-            // If approved, render any seller page requested via the <Outlet />.
-            // If they are on the base dashboard URL, show the actual SellerDashboard component.
             if (location.pathname === '/seller/dashboard') {
                 return <Outlet />;
             }
             return <Outlet />;
         } else {
-            // If not approved...
             if (isAllowedPath) {
-                // ...but they are on an allowed path (like /settings), show that page.
-                // The <Outlet/> will render the correct component based on the route in App.jsx.
-                // We show the status page specifically for the dashboard route.
                 return location.pathname === '/seller/dashboard' ? <ArtisanStatusPage /> : <Outlet />;
             } else {
-                // ...and they try to access a protected URL directly, redirect them to their dashboard (which shows the status page).
                 return <Navigate to="/seller/dashboard" replace />;
             }
         }

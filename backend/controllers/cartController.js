@@ -63,7 +63,7 @@ export const mergeCarts = asyncHandler(async (req, res) => {
     const { localCart } = req.body; // Expecting an array of { productId, quantity }
     const user = await User.findById(req.user._id);
 
-    // --- NEW, ROBUST MERGE LOGIC ---
+    // ROBUST MERGE LOGIC
     for (const localItem of localCart) {
         const dbItemIndex = user.cart.findIndex(
             (dbItem) => dbItem.productId.toString() === localItem.productId
@@ -77,7 +77,6 @@ export const mergeCarts = asyncHandler(async (req, res) => {
             user.cart.push(localItem);
         }
     }
-    // --- END NEW LOGIC ---
 
     await user.save();
     

@@ -1,18 +1,9 @@
-/*
-* FILE: backend/controllers/reviewController.js
-*
-* DESCRIPTION:
-* This file is updated to add a notification trigger when a new review is created.
-* - Imports the 'createNotification' utility.
-* - In 'createReview', after a review is successfully submitted, it finds the
-* product's artisan and sends them a notification about the new review.
-*/
 import Review from '../models/reviewModel.js';
 import Product from '../models/productModel.js';
 import Order from '../models/orderModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
-import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
+import { createNotification } from '../utils/notificationUtils.js'; 
 
 export const createReview = async (req, res, next) => {
     const { productId } = req.params;
@@ -43,7 +34,6 @@ export const createReview = async (req, res, next) => {
         const newReview = new Review({ productId, userId, rating, comment });
         await newReview.save();
 
-        // --- ADDED: Notify Artisan Trigger ---
         if (product.artisanId) {
             await createNotification(
                 product.artisanId,
@@ -53,7 +43,6 @@ export const createReview = async (req, res, next) => {
                 'artisan'
             );
         }
-        // ------------------------------------
 
         res.status(201).json(new ApiResponse(201, newReview, 'Review submitted successfully.'));
     } catch (error) {
@@ -61,7 +50,6 @@ export const createReview = async (req, res, next) => {
     }
 };
 
-// ... (getProductReviews, updateReview, getUserReviewForProduct remain unchanged)
 export const getProductReviews = async (req, res, next) => {
     const { productId } = req.params;
     try {
@@ -76,6 +64,7 @@ export const getProductReviews = async (req, res, next) => {
         next(error);
     }
 };
+
 export const updateReview = async (req, res, next) => {
     const { reviewId } = req.params;
     const { rating, comment } = req.body;
@@ -96,6 +85,7 @@ export const updateReview = async (req, res, next) => {
         next(error);
     }
 };
+
 export const getUserReviewForProduct = async (req, res, next) => {
     const { productId } = req.params;
     const userId = req.user._id;

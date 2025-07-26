@@ -96,8 +96,8 @@ const OrderItemReview = ({ item, onReviewUpdate }) => {
                 product={item}
                 existingReview={review}
                 onSubmitSuccess={(updatedReview) => {
-                    setReview(updatedReview); // Update local state immediately
-                    onReviewUpdate(updatedReview); // Notify parent to refetch if needed
+                    setReview(updatedReview); 
+                    onReviewUpdate(updatedReview); 
                 }}
             />
         </>
@@ -112,7 +112,6 @@ const OrderDetail = ({ order, onReviewUpdate }) => {
     return (
         <div className="space-y-8">
 
-            {/* --- NEW: Top section with status tracker and order summary --- */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-1">
                     <OrderStatusTracker history={order.statusHistory} currentStatus={order.status} />
@@ -138,7 +137,7 @@ const OrderDetail = ({ order, onReviewUpdate }) => {
                 </div>
             </div>
 
-            {/* --- Items List section remains below --- */}
+            {/* Items List section remains below */}
             <div>
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Items in this Order</h2>
                 <div className="space-y-4">

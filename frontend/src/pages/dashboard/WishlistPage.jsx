@@ -25,7 +25,7 @@ const WishlistPage = () => {
         };
 
         fetchWishlist();
-    }, [user?.wishlist]); // Re-fetch whenever the user's wishlist array changes
+    }, [user?.wishlist]); 
 
     if (isLoading) {
         return <Loader text="Loading your wishlist..." />;

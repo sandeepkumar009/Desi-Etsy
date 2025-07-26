@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler';
-import bcrypt from 'bcryptjs'; // Import bcrypt
+import bcrypt from 'bcryptjs'; 
 import User from '../models/userModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
@@ -96,10 +96,8 @@ export const deleteUserAddress = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Address not found");
     }
 
-    // --- FIX: Use pull() to remove the subdocument from the array ---
     user.addresses.pull({ _id: addressId });
 
-    // If the deleted address was the default, and there are other addresses, set the first one as the new default.
     if (address.isDefault && user.addresses.length > 0) {
         user.addresses[0].isDefault = true;
     }

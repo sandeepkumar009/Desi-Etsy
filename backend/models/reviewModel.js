@@ -23,7 +23,6 @@ const ReviewSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-// Compound index to ensure a user can only review a product once
 ReviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
 
 // Static method to calculate average ratings and update the product

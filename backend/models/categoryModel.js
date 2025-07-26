@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-// Product Category Model * Manages the different categories products can belong to. * Managed by admins.
 const CategorySchema = new mongoose.Schema({
     name: {
         type: String,
@@ -8,7 +7,6 @@ const CategorySchema = new mongoose.Schema({
         unique: true,
         trim: true,
     },
-    // URL-friendly version of the name, can be auto-generated from the name
     slug: {
         type: String,
         required: true,
@@ -18,7 +16,6 @@ const CategorySchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    // Reference to the admin who created the category
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

@@ -3,40 +3,27 @@ import { useLocation, useSearchParams } from 'react-router-dom';
 import { getAllProducts, getAllCategories } from '../services/productService';
 import ProductCard from '../components/products/ProductCard';
 import { motion, AnimatePresence } from 'framer-motion';
+import Loader from '../components/common/Loader';
 
-// --- ICONS ---
+// ICONS
 const FilterIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clipRule="evenodd" /></svg>;
 const XIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>;
 
-// --- COMPONENTS ---
-const SkeletonCard = () => (
-    <div className="bg-white rounded-xl shadow-md overflow-hidden animate-pulse">
-        <div className="aspect-square w-full bg-gray-200"></div>
-        <div className="p-4">
-            <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-        </div>
-    </div>
-);
-
-// --- MODIFIED: Smart Pagination Component ---
+// Smart Pagination Component
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
 
     const generatePageNumbers = () => {
         const pageNumbers = [];
-        const maxPagesToShow = 5; // Max buttons to show (e.g., 1 ... 4 5 6 ... 10)
+        const maxPagesToShow = 5;
         const ellipsis = '...';
 
         if (totalPages <= maxPagesToShow + 2) {
-            // If total pages is small, show all numbers
             for (let i = 1; i <= totalPages; i++) {
                 pageNumbers.push(i);
             }
         } else {
-            pageNumbers.push(1); // Always show first page
+            pageNumbers.push(1);
 
             let startPage = Math.max(2, currentPage - 1);
             let endPage = Math.min(totalPages - 1, currentPage + 1);
@@ -61,7 +48,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
                 pageNumbers.push(ellipsis);
             }
 
-            pageNumbers.push(totalPages); // Always show last page
+            pageNumbers.push(totalPages);
         }
         return pageNumbers;
     };
@@ -72,15 +59,14 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <div className="flex justify-center items-center space-x-1 sm:space-x-2 mt-12">
             <button onClick={() => onPageChange(currentPage - 1)} disabled={currentPage === 1} className="px-3 py-2 sm:px-4 bg-white border border-gray-300 rounded-lg disabled:opacity-50 text-sm sm:text-base">&laquo;</button>
             {pageNumbers.map((num, index) => (
-                <button 
-                    key={`${num}-${index}`} 
-                    onClick={() => typeof num === 'number' && onPageChange(num)} 
+                <button
+                    key={`${num}-${index}`}
+                    onClick={() => typeof num === 'number' && onPageChange(num)}
                     disabled={typeof num !== 'number'}
-                    className={`px-3 py-2 sm:px-4 border rounded-lg text-sm sm:text-base ${
-                        currentPage === num 
-                        ? 'bg-orange-500 text-white border-orange-500' 
-                        : 'bg-white border-gray-300'
-                    } ${typeof num !== 'number' ? 'cursor-default' : ''}`}
+                    className={`px-3 py-2 sm:px-4 border rounded-lg text-sm sm:text-base ${currentPage === num
+                            ? 'bg-orange-500 text-white border-orange-500'
+                            : 'bg-white border-gray-300'
+                        } ${typeof num !== 'number' ? 'cursor-default' : ''}`}
                 >
                     {num}
                 </button>
@@ -100,7 +86,7 @@ const FilterSidebar = ({ filters, setFilters, categories, isMobile, onClose }) =
     const handleRatingChange = (newRating) => {
         setFilters(prev => ({ ...prev, rating: prev.rating === newRating ? 0 : newRating, page: 1 }));
     };
-    
+
     const clearFilters = () => {
         setFilters({
             search: '',
@@ -175,7 +161,7 @@ const FilterSidebar = ({ filters, setFilters, categories, isMobile, onClose }) =
     );
 };
 
-// --- MAIN PAGE COMPONENT ---
+// MAIN PAGE COMPONENT
 const Products = () => {
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -195,19 +181,16 @@ const Products = () => {
         sort: searchParams.get('sort') || 'createdAt-desc',
         page: Number(searchParams.get('page')) || 1,
     });
-    
-    // --- MODIFIED: This effect now ONLY reacts to external search/category changes ---
+
     const searchFromUrl = searchParams.get('search') || '';
     const categoryFromUrl = searchParams.get('category') || '';
 
     useEffect(() => {
-        // This effect syncs the state if the user performs a new search from the navbar
-        // It now correctly resets the page to 1 ONLY for a new search/category filter
         setFilters(prevFilters => ({
             ...prevFilters,
             search: searchFromUrl,
             category: categoryFromUrl,
-            page: 1 
+            page: 1
         }));
     }, [searchFromUrl, categoryFromUrl]);
 
@@ -220,7 +203,7 @@ const Products = () => {
                 const categoriesData = await getAllCategories();
                 setCategories(categoriesData);
             }
-            
+
             const productsData = await getAllProducts({
                 page: filters.page,
                 limit: 12,
@@ -235,7 +218,7 @@ const Products = () => {
 
             setProducts(productsData.products);
             setPagination(productsData.pagination);
-            
+
         } catch (err) {
             setError('Failed to fetch data. Please try again later.');
             console.error(err);
@@ -257,10 +240,10 @@ const Products = () => {
         if (filters.rating) params.rating = String(filters.rating);
         if (filters.sort !== 'createdAt-desc') params.sort = filters.sort;
         if (filters.page > 1) params.page = String(filters.page);
-        
+
         setSearchParams(params, { replace: true });
     }, [filters, setSearchParams]);
-    
+
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= pagination.totalPages) {
             setFilters(prev => ({ ...prev, page: newPage }));
@@ -271,24 +254,26 @@ const Products = () => {
     const handleSortChange = (e) => {
         setFilters(prev => ({ ...prev, sort: e.target.value, page: 1 }));
     };
-    
+
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="text-center mb-8">
-                    <h1 className="text-4xl font-bold text-gray-800 font-brand">Our Treasures</h1>
-                    <p className="mt-2 text-lg text-gray-600">Discover authentic handmade products from talented artisans.</p>
+                    <h1 className="text-4xl font-bold text-desi-primary font-brand">Our Treasures</h1>
+                    <p className="mt-2 text-lg text-desi-secondary">Discover authentic handmade products from talented artisans.</p>
                 </div>
 
                 <div className="flex flex-col md:flex-row gap-8">
                     <div className="hidden md:block">
-                        <FilterSidebar filters={filters} setFilters={setFilters} categories={categories} />
+                        <div className='sticky top-24'>
+                            <FilterSidebar filters={filters} setFilters={setFilters} categories={categories} />
+                        </div>
                     </div>
 
                     <main className="flex-1">
                         <div className="flex flex-col md:flex-row items-center justify-between p-4 bg-white rounded-xl shadow-sm border mb-6 gap-4">
                             <div className="text-sm text-gray-600 font-medium">
-                                {loading ? 'Loading...' : `Showing ${products.length} of ${pagination.totalProducts || 0} products`}
+                                {loading ? 'Loading...' : `Showing ${products.length} (${pagination.currentPage*12}-${pagination.currentPage*12+products.length}) of ${pagination.totalProducts || 0} products`}
                             </div>
                             <div className="flex items-center gap-4 w-full md:w-auto">
                                 <button onClick={() => setIsFilterOpen(true)} className="md:hidden flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-lg font-semibold">
@@ -304,10 +289,12 @@ const Products = () => {
                         </div>
 
                         {error && <div className="text-center text-red-500 bg-red-100 p-4 rounded-lg">{error}</div>}
-                        
+
                         <motion.div layout className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                             {loading ? (
-                                Array.from({ length: 12 }).map((_, i) => <SkeletonCard key={i} />)
+                                <div className="col-span-full flex justify-center items-center">
+                                    <Loader text="Loading products..." />
+                                </div>
                             ) : products.length > 0 ? (
                                 <AnimatePresence>
                                     {products.map(product => <ProductCard key={product._id} product={product} />)}
@@ -326,7 +313,7 @@ const Products = () => {
                     </main>
                 </div>
             </div>
-            
+
             {isFilterOpen && <div className="fixed inset-0 bg-black/40 z-40" onClick={() => setIsFilterOpen(false)}></div>}
             {isFilterOpen && <FilterSidebar filters={filters} setFilters={setFilters} categories={categories} isMobile={true} onClose={() => setIsFilterOpen(false)} />}
         </div>

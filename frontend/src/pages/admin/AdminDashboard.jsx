@@ -4,8 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { getAdminSummary } from '../../services/analyticsService';
 import Loader from '../../components/common/Loader';
 
-// --- Reusable UI Components for the Dashboard ---
-
+// Reusable UI Components for the Dashboard
 const StatCard = ({ title, value, icon, note }) => (
     <div className="bg-white p-6 rounded-lg shadow-md flex items-center">
         <div className="bg-blue-100 text-blue-500 rounded-full p-3 mr-4 text-3xl">
@@ -64,8 +63,7 @@ const RecentOrderItem = ({ order }) => (
     </li>
 );
 
-// --- Main Admin Dashboard Page Component ---
-
+// Main Admin Dashboard Page Component
 const AdminDashboardPage = () => {
     const { user } = useAuth();
     const [summary, setSummary] = useState(null);

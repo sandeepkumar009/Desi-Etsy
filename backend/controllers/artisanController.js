@@ -1,13 +1,3 @@
-/*
-* FILE: backend/controllers/artisanController.js
-*
-* DESCRIPTION:
-* This file is updated to add notification triggers for the artisan lifecycle.
-* - Imports the 'createNotification' utility.
-* - In 'applyForArtisan', it notifies all admins when a new application is submitted.
-* - In 'updateArtisanStatus', it notifies the specific user when their application
-* status is changed by an admin.
-*/
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import Order from '../models/orderModel.js';
@@ -19,8 +9,7 @@ import { createNotification } from '../utils/notificationUtils.js'; // <-- ADDED
 
 const PLATFORM_COMMISSION_RATE = 0.15; // 15% commission
 
-// --- NEW PAYOUT FUNCTIONS FOR ARTISANS ---
-// ... (getMyPayoutSummary, getMyPayoutHistory, getMyPayoutInfo, updateMyPayoutInfo remain unchanged)
+// NEW PAYOUT FUNCTIONS FOR ARTISANS
 export const getMyPayoutSummary = asyncHandler(async (req, res) => {
     const artisanId = req.user._id;
     const unpaidOrders = await Order.find({
@@ -49,11 +38,13 @@ export const getMyPayoutSummary = asyncHandler(async (req, res) => {
     };
     res.status(200).json(new ApiResponse(200, summary, "Artisan payout summary fetched successfully."));
 });
+
 export const getMyPayoutHistory = asyncHandler(async (req, res) => {
     const artisanId = req.user._id;
     const history = await Payout.find({ artisanId: artisanId, status: 'completed' }).sort({ createdAt: -1 });
     res.status(200).json(new ApiResponse(200, history, "Payout history fetched successfully."));
 });
+
 export const getMyPayoutInfo = asyncHandler(async (req, res) => {
     const artisan = await User.findById(req.user._id).select('artisanProfile.payoutInfo');
     if (!artisan || !artisan.artisanProfile) {
@@ -61,6 +52,7 @@ export const getMyPayoutInfo = asyncHandler(async (req, res) => {
     }
     res.status(200).json(new ApiResponse(200, artisan.artisanProfile.payoutInfo, "Payout info fetched."));
 });
+
 export const updateMyPayoutInfo = asyncHandler(async (req, res) => {
     const { accountHolderName, accountNumber, ifscCode, bankName } = req.body;
     if (!accountHolderName || !accountNumber || !ifscCode || !bankName) {
@@ -74,7 +66,6 @@ export const updateMyPayoutInfo = asyncHandler(async (req, res) => {
     await artisan.save();
     res.status(200).json(new ApiResponse(200, artisan.artisanProfile.payoutInfo, "Payout information updated successfully."));
 });
-// ---
 
 // POST /api/artisans/apply - Authenticated users submit artisan applications
 export const applyForArtisan = asyncHandler(async (req, res) => {
@@ -111,7 +102,7 @@ export const applyForArtisan = asyncHandler(async (req, res) => {
     const updatedUser = await user.save();
     const userToReturn = await User.findById(updatedUser._id).select('-password');
 
-    // --- ADDED: Notify Admins Trigger ---
+    // Notify Admins Trigger
     const admins = await User.find({ role: 'admin' });
     for (const admin of admins) {
         await createNotification(
@@ -121,14 +112,12 @@ export const applyForArtisan = asyncHandler(async (req, res) => {
             'admin'
         );
     }
-    // ------------------------------------
 
     return res.status(200).json(
         new ApiResponse(200, { user: userToReturn }, "Application to become an artisan submitted successfully. Please wait for admin approval.")
     );
 });
 
-// ... (getArtisanPublicProfile, updateArtisanProfile, getAllArtisans remain unchanged)
 export const getArtisanPublicProfile = asyncHandler(async (req, res) => {
     const { artisanId } = req.params;
     const artisan = await User.findById(artisanId).select('name profilePicture role artisanProfile.brandName artisanProfile.story artisanProfile.bannerImage');
@@ -137,6 +126,7 @@ export const getArtisanPublicProfile = asyncHandler(async (req, res) => {
     }
     res.status(200).json(new ApiResponse(200, artisan, 'Artisan profile fetched successfully.'));
 });
+
 export const updateArtisanProfile = asyncHandler(async (req, res) => {
     const artisan = await User.findById(req.user._id);
     if (!artisan) throw new ApiError(404, 'Artisan not found.');
@@ -164,6 +154,7 @@ export const updateArtisanProfile = asyncHandler(async (req, res) => {
     const userToReturn = await User.findById(updatedArtisan._id).select('-password');
     res.status(200).json(new ApiResponse(200, userToReturn, 'Profile updated successfully.'));
 });
+
 export const getAllArtisans = asyncHandler(async (req, res) => {
     const { status } = req.query;
     const query = { role: 'artisan' };
@@ -176,13 +167,7 @@ export const getAllArtisans = asyncHandler(async (req, res) => {
     if (!artisans) throw new ApiError(404, 'No artisans found.');
     res.status(200).json(new ApiResponse(200, artisans, 'Artisans fetched successfully.'));
 });
-// ---
 
-/**
- * @desc    Update an artisan's status (approve, reject, suspend)
- * @route   PATCH /api/artisans/admin/status/:artisanId
- * @access  Private/Admin
- */
 export const updateArtisanStatus = asyncHandler(async (req, res) => {
     const { artisanId } = req.params;
     const { status } = req.body;
@@ -200,15 +185,14 @@ export const updateArtisanStatus = asyncHandler(async (req, res) => {
     artisan.artisanProfile.status = status;
     await artisan.save({ validateBeforeSave: false });
 
-    // --- ADDED: Notify User Trigger ---
+    // Notify User Trigger
     const statusMessage = status.charAt(0).toUpperCase() + status.slice(1); // Capitalize status
     await createNotification(
         artisan._id,
         `Your artisan application has been ${statusMessage}.`,
-        'seller/dashboard', // A generic link for the user
-        'customer' // Their role might still be customer if rejected
+        'seller/dashboard',
+        'customer'
     );
-    // ----------------------------------
 
     res.status(200).json(new ApiResponse(200, { artisanId, newStatus: status }, `Artisan has been ${status}.`));
 });

@@ -30,15 +30,14 @@ const HeartIcon = ({ isFilled }) => (
 );
 
 const ProductCard = ({ product }) => {
-  const { user, toggleWishlist } = useAuth(); // NEW
+  const { user, toggleWishlist } = useAuth();
   const primaryImage = product.images && product.images.length > 0 ? product.images[0] : 'https://placehold.co/600x600/F7FAFC/E2E8F0?text=No+Image';
 
-  // NEW: Check if the product is in the user's wishlist
   const isWishlisted = user?.wishlist?.includes(product._id);
 
   const handleWishlistClick = (e) => {
-    e.preventDefault(); // Prevent navigating to product page
-    e.stopPropagation(); // Stop event bubbling
+    e.preventDefault(); 
+    e.stopPropagation();
     toggleWishlist(product._id);
   };
 
@@ -52,7 +51,6 @@ const ProductCard = ({ product }) => {
       whileHover={{ scale: 1.03, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
       className="bg-white rounded-xl shadow-md overflow-hidden transition-shadow duration-300 flex flex-col"
     >
-      {/* --- NEW: Wishlist Button --- */}
       {user && (
         <button
           onClick={handleWishlistClick}
@@ -82,8 +80,6 @@ const ProductCard = ({ product }) => {
 
           <div className="flex items-baseline gap-2 mt-2">
             <span className="text-gray-800 font-bold text-lg">₹{product.price.toLocaleString('en-IN')}</span>
-            {/* You could add a discounted price here if applicable */}
-            {/* <span className="text-gray-500 line-through text-sm">₹{product.originalPrice}</span> */}
           </div>
         </div>
       </Link>
