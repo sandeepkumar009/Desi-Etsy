@@ -1,7 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
-import User from '../models/userModel.js'; // Import User model
+import User from '../models/userModel.js';
 import { ApiError } from '../utils/ApiError.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
 import mongoose from 'mongoose';
@@ -10,7 +10,7 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
     const artisanId = req.user._id;
     const { timePeriod = '30d' } = req.query;
 
-    // --- 1. Calculate Date Range ---
+    // 1. Calculate Date Range
     let startDate = new Date();
     switch (timePeriod) {
         case '7d':
@@ -28,7 +28,7 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
             break;
     }
 
-    // --- 2. Main Aggregation for Revenue, Sales, and Top Products ---
+    // 2. Main Aggregation for Revenue, Sales, and Top Products
     const salesData = await Order.aggregate([
         // Stage 1: Filter orders for the artisan within the date range and are considered "successful"
         {
@@ -59,7 +59,7 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
         { $sort: { totalRevenue: -1 } }
     ]);
 
-    // --- 3. Calculate Key Metrics from Aggregated Data ---
+    // 3. Calculate Key Metrics from Aggregated Data
     const totalRevenue = salesData.reduce((acc, item) => acc + item.totalRevenue, 0);
     const totalOrders = await Order.countDocuments({ 
         'items.artisanId': artisanId, 
@@ -74,14 +74,14 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
         revenue: p.totalRevenue
     }));
 
-    // --- 4. Fetch Additional Stats (not dependent on date range) ---
+    // 4. Fetch Additional Stats (not dependent on date range)
     const pendingOrders = await Order.countDocuments({ 
         'items.artisanId': artisanId, 
         status: { $in: ['paid', 'processing', 'packed'] } 
     });
     const totalProducts = await Product.countDocuments({ artisanId: artisanId });
 
-    // --- 5. Assemble Response ---
+    // 5. Assemble Response
     const analytics = {
         keyStats: {
             totalRevenue,
@@ -100,13 +100,13 @@ export const getArtisanAnalytics = asyncHandler(async (req, res) => {
     res.status(200).json(new ApiResponse(200, analytics, 'Analytics data fetched successfully.'));
 });
 
-// --- NEW: Controller for Admin Dashboard Summary ---
+// Controller for Admin Dashboard Summary
 export const getAdminDashboardSummary = asyncHandler(async (req, res) => {
-    // --- 1. Define date ranges ---
+    // 1. Define date ranges
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    // --- 2. Perform all database queries in parallel for efficiency ---
+    // 2. Perform all database queries in parallel for efficiency
     const [
         totalRevenueResult,
         totalOrders,
@@ -138,7 +138,7 @@ export const getAdminDashboardSummary = asyncHandler(async (req, res) => {
         User.find().sort({ createdAt: -1 }).limit(5).select('name email role createdAt')
     ]);
 
-    // --- 3. Format the data for the response ---
+    // 3. Format the data for the response
     const summary = {
         keyMetrics: {
             totalRevenue: totalRevenueResult[0]?.total || 0,

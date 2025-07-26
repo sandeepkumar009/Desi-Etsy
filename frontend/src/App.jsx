@@ -1,12 +1,3 @@
-/*
-* FILE: frontend/src/App.jsx
-*
-* DESCRIPTION:
-* This file is updated to create distinct routes for the notifications page
-* within each role's layout. This ensures the URL reflects the context
-* (e.g., /seller/notifications) and that the page is rendered within the
-* correct dashboard sidebar and navbar.
-*/
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
@@ -23,7 +14,6 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ApplyArtisan from "./pages/ApplyArtisan";
 import GoogleAuthCallback from "./pages/GoogleAuthCallback";
-// import DashboardLayout from "./pages/dashboard/DashboardLayout";
 import DashboardLayout from "./components/layout/Sidebar";
 import ProfilePage from "./pages/dashboard/ProfilePage"; 
 import SecurityPage from "./pages/dashboard/SecurityPage";
@@ -35,16 +25,16 @@ import ProductDetail from "./pages/ProductDetail";
 import ArtisanShopPage from './pages/ArtisanShopPage';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderSuccessPage from './pages/OrderSuccessPage';
-import NotificationsPage from "./pages/NotificationsPage"; // Using this for all roles
+import NotificationsPage from "./pages/NotificationsPage";
 
-// --- SELLER PORTAL IMPORTS ---
+// SELLER PORTAL IMPORTS
 import SellerLayout from "./components/layout/SellerLayout";
 import SellerDashboard from "./pages/seller/SellerDashboard";
 import SellerProductsPage from "./pages/seller/products/ProductsPage";
 import SellerOrdersPage from "./pages/seller/orders/OrdersPage";
 import PayoutsPage from "./pages/seller/PayoutsPage";
 
-// --- ADMIN PORTAL IMPORTS ---
+// ADMIN PORTAL IMPORTS
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ArtisanVerificationPage from "./pages/admin/ArtisanVerificationPage";
@@ -69,7 +59,7 @@ function App() {
         theme="light"
       />
       <Routes>
-        {/* --- CUSTOMER FACING ROUTES --- */}
+        {/* CUSTOMER FACING ROUTES */}
         <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -81,7 +71,7 @@ function App() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/artisan/:artisanId" element={<ArtisanShopPage />} />
 
-            {/* --- PROTECTED ROUTES --- */}
+            {/* PROTECTED ROUTES */}
             <Route path="/apply-artisan" element={<ProtectedRoute><ApplyArtisan /></ProtectedRoute>} />
             <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
             <Route path="/order-success/:orderGroupId" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>} />
@@ -97,7 +87,7 @@ function App() {
             </Route>
         </Route>
         
-        {/* --- SELLER PORTAL ROUTES --- */}
+        {/* SELLER PORTAL ROUTES */}
         <Route path="/seller" element={<ProtectedRoute allowedRoles={['artisan']}><SellerLayout /></ProtectedRoute>} >
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<SellerDashboard />} />
@@ -107,7 +97,7 @@ function App() {
             <Route path="notifications" element={<NotificationsPage />} />
         </Route>
 
-        {/* --- ADMIN PORTAL ROUTES --- */}
+        {/* ADMIN PORTAL ROUTES */}
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>} >
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />

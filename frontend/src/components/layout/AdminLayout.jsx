@@ -28,7 +28,6 @@ const AdminLayout = () => {
                 <AdminNavbar toggleSidebar={() => setSidebarOpen(!isSidebarOpen)} />
 
                 <main className="p-4 sm:p-6 lg:p-8">
-                    {/* The Outlet will render the specific admin page component */}
                     <Outlet />
                 </main>
             </div>

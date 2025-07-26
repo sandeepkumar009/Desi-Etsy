@@ -4,7 +4,7 @@ import { protect, authorize } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-// --- PROTECTED ROUTES (Artisans Only) ---
+// PROTECTED ROUTES (Artisans Only)
 router.get('/', protect, authorize('artisan'), getArtisanAnalytics);
 // Route for Admin Dashboard Summary
 router.get('/summary', protect, authorize('admin'), getAdminDashboardSummary);

@@ -1,6 +1,3 @@
-// frontend/src/pages/admin/PayoutManagementPage.jsx
-// This is a new page for the admin to view and record payouts.
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { getPayoutSummary, recordPayout } from '../../services/payoutService';

@@ -1,6 +1,3 @@
-// frontend/src/pages/OrderSuccessPage.jsx
-// A new page to show after a successful order.
-
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Button from '../components/common/Button';

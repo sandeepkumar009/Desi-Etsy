@@ -12,8 +12,7 @@ import Modal from '../components/common/Modal';
 import Input from '../components/common/Input';
 import { toast } from 'react-toastify';
 
-// --- ICONS ---
-// --- FIX: Added the 'onClick' prop to be passed to the SVG element ---
+// ICONS
 const StarIcon = ({ className, onClick }) => <svg className={className} fill="currentColor" viewBox="0 0 20 20" onClick={onClick}><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.967a1 1 0 00.95.69h4.175c.969 0 1.371 1.24.588 1.81l-3.38 2.455a1 1 0 00-.364 1.118l1.287 3.966c.3.922-.755 1.688-1.54 1.118l-3.38-2.454a1 1 0 00-1.175 0l-3.38 2.454c-.784.57-1.838-.196-1.54-1.118l1.287-3.966a1 1 0 00-.364-1.118L2.05 9.394c-.783-.57-.38-1.81.588-1.81h4.175a1 1 0 00.95-.69l1.286-3.967z" /></svg>;
 const PlusIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>;
 const MinusIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 12H6" /></svg>;
@@ -24,7 +23,7 @@ const HeartIcon = ({ isFilled }) => (
 );
 
 
-// --- Star Rating Component ---
+// Star Rating Component
 const StarRating = ({ rating, setRating, interactive = false }) => (
     <div className={`flex gap-1 ${interactive ? 'cursor-pointer' : ''}`}>
         {[...Array(5)].map((_, i) => (
@@ -37,8 +36,6 @@ const StarRating = ({ rating, setRating, interactive = false }) => (
     </div>
 );
 
-// ReviewForm and ProductDetail components remain unchanged below as the fix was in the StarIcon.
-// ... The rest of your ProductDetail.jsx file ...
 const ReviewForm = ({ productId, existingReview, onReviewSubmitted }) => {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -106,11 +103,13 @@ const ReviewForm = ({ productId, existingReview, onReviewSubmitted }) => {
     );
 };
 
-// **NEW** Address Modal for Buy Now
-const AddressModal = ({ isOpen, onClose, onConfirm, user }) => {
+// Address Modal for Buy Now
+const AddressModal = ({ isOpen, onClose, onConfirm, user, price }) => {
     const [shippingAddress, setShippingAddress] = useState({
         addressLine1: '', addressLine2: '', city: '', state: '', postalCode: '', country: 'India',
     });
+    const [paymentMethod, setPaymentMethod] = useState('online');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const defaultAddress = user?.addresses?.find(addr => addr.isDefault);
@@ -125,21 +124,39 @@ const AddressModal = ({ isOpen, onClose, onConfirm, user }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onConfirm(shippingAddress);
+        onConfirm(shippingAddress, paymentMethod);
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} title="Confirm Shipping Address">
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-2">
                 <Input label="Address Line 1" name="addressLine1" value={shippingAddress.addressLine1} onChange={handleChange} required />
                 <Input label="Address Line 2 (Optional)" name="addressLine2" value={shippingAddress.addressLine2} onChange={handleChange} />
-                <Input label="City" name="city" value={shippingAddress.city} onChange={handleChange} required />
-                <Input label="State" name="state" value={shippingAddress.state} onChange={handleChange} required />
-                <Input label="Postal Code" name="postalCode" value={shippingAddress.postalCode} onChange={handleChange} required />
-                <Input label="Country" name="country" value={shippingAddress.country} onChange={handleChange} required />
-                <div className="flex justify-end gap-4 pt-4">
-                    <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-                    <Button type="submit">Proceed to Payment</Button>
+                <div className='flex gap-2'>
+                    <Input label="City" name="city" value={shippingAddress.city} onChange={handleChange} required />
+                    <Input label="State" name="state" value={shippingAddress.state} onChange={handleChange} required />
+                </div>
+                <div className='flex gap-2'>
+                    <Input label="Postal Code" name="postalCode" value={shippingAddress.postalCode} onChange={handleChange} required />
+                    <Input label="Country" name="country" value={shippingAddress.country} onChange={handleChange} required />
+                </div>
+                <div className="bg-white p-6 rounded-lg shadow-md">
+                    <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+                    <div className="flex justify-between">
+                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-amber-50">
+                            <input type="radio" name="paymentMethod" value="Online" checked={paymentMethod === 'Online'} onChange={(e) => setPaymentMethod(e.target.value)} className="form-radio h-5 w-5 text-amber-500" />
+                            <span className="ml-3 text-gray-700">Pay Online</span>
+                        </label>
+                        <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-amber-50">
+                            <input type="radio" name="paymentMethod" value="COD" checked={paymentMethod === 'COD'} onChange={(e) => setPaymentMethod(e.target.value)} className="form-radio h-5 w-5 text-amber-500" />
+                            <span className="ml-3 text-gray-700">Pay on Delivery</span>
+                        </label>
+                    </div>
+                </div>
+                <div className="mt-6">
+                    <Button type="submit" className="w-full" disabled={loading}>
+                        {loading ? 'Processing...' : `Place Order (₹${price})`}
+                    </Button>
                 </div>
             </form>
         </Modal>
@@ -249,7 +266,7 @@ const ProductDetail = () => {
         paymentObject.open();
     };
 
-    const handleConfirmAddress = async (shippingAddress) => {
+    const handleConfirmAddress = async (shippingAddress, paymentMethod) => {
         setIsAddressModalOpen(false);
         setIsProcessingBuyNow(true);
         try {
@@ -257,14 +274,19 @@ const ProductDetail = () => {
                 productId: product._id,
                 quantity,
                 shippingAddress,
-                paymentMethod: 'Online',
+                paymentMethod,
             };
             const result = await createDirectOrder(orderPayload);
             if (result.success) {
-                displayRazorpay(result.data);
+                if (paymentMethod === 'COD') {
+                    toast.success('Order placed successfully!');
+                    navigate(`/order-success/${result.data.orderGroupId}`);
+                } else {
+                    // Online payment: open Razorpay
+                    displayRazorpay(result.data);
+                }
             } else {
-                toast.error(result.message || "Could not initiate purchase.");
-                setIsProcessingBuyNow(false);
+                toast.error(result.message || 'Failed to place order.');
             }
         } catch (err) {
             toast.error(err.message || "An error occurred.");
@@ -297,7 +319,7 @@ const ProductDetail = () => {
 
     return (
         <>
-            <AddressModal isOpen={isAddressModalOpen} onClose={() => setIsAddressModalOpen(false)} onConfirm={handleConfirmAddress} user={user} />
+            <AddressModal isOpen={isAddressModalOpen} onClose={() => setIsAddressModalOpen(false)} onConfirm={handleConfirmAddress} user={user} price={product.price.toLocaleString('en-IN')}/>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
                     <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
@@ -342,7 +364,6 @@ const ProductDetail = () => {
                                     <span className="px-4 font-semibold">{quantity}</span>
                                     <button onClick={() => setQuantity(q => Math.min(product.stock, q + 1))} className="p-3 text-gray-600 hover:bg-gray-100 rounded-r-full"><PlusIcon /></button>
                                 </div>
-                                {/* --- UPDATED: Conditional "Add to Cart" / "Go to Cart" Button --- */}
                                 {isInCart ? (
                                     <Button onClick={() => navigate('/cart')} className="flex-1" variant="secondary">
                                         Go to Cart

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import * as orderService from '../../services/orderService';
 import Loader from '../../components/common/Loader';
-import OrderDetail from './OrderDetail'; // We will create this next
+import OrderDetail from './OrderDetail';
 import { toast } from 'react-toastify';
 
 // Order Status Pill Component
@@ -85,8 +85,6 @@ const CustomerOrdersPage = () => {
     }, [orderId]);
 
     const handleReviewUpdate = (updatedReview) => {
-        // This function will be passed down to OrderDetail to refresh the view after a review is submitted.
-        // For now, we can just refetch the order data.
          const refetchData = async () => {
             const response = await orderService.getCustomerOrderDetail(orderId);
             setData(response);

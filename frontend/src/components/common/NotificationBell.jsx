@@ -1,12 +1,3 @@
-/*
-* FILE: frontend/src/components/common/NotificationBell.jsx
-*
-* DESCRIPTION:
-* This component is now significantly smarter. It accepts a `role` prop
-* ('customer', 'artisan', or 'admin') which determines which notifications
-* and unread count to display. The "View All Notifications" link is now
-* also dynamic, pointing to the correct dashboard based on the provided role.
-*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useNotifications } from '../../context/NotificationContext';
@@ -27,7 +18,7 @@ const useOutsideClick = (ref, callback) => {
   }, [ref, callback]);
 };
 
-// MODIFIED: Component now accepts a 'role' prop
+// Component accepts a 'role' prop
 const NotificationBell = ({ role }) => {
     const { 
         customerNotifications, customerUnreadCount,

@@ -1,10 +1,6 @@
-// backend/config/razorpay.js
-// This new file initializes the Razorpay instance with your API keys.
-
 import Razorpay from 'razorpay';
 import dotenv from 'dotenv';
 
-// Ensure environment variables are loaded
 dotenv.config();
 
 const razorpayKeyId = process.env.RAZORPAY_KEY_ID;

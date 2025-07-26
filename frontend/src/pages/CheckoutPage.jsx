@@ -1,6 +1,3 @@
-// frontend/src/pages/CheckoutPage.jsx
-// This is the new page component for the entire checkout process.
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart';
@@ -73,7 +70,7 @@ const CheckoutPage = () => {
                         navigate(`/order-success/${result.data.orderGroupId}`);
                     } else {
                         toast.error(result.message || 'Payment verification failed.');
-                        navigate('/order-failure'); // Optional: create a failure page
+                        navigate('/order-failure');
                     }
                 } catch (err) {
                     toast.error(err.message || 'An error occurred during payment verification.');

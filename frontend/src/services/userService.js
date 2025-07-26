@@ -64,8 +64,7 @@ export const changePassword = async (passwordData) => {
     }
 };
 
-// --- NEW WISHLIST FUNCTIONS ---
-
+// WISHLIST FUNCTIONS
 export const getWishlist = async () => {
     try {
         const response = await api.get('/users/profile/wishlist');

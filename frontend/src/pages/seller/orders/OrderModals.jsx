@@ -4,7 +4,7 @@ import Modal from '../../../components/common/Modal';
 import Button from '../../../components/common/Button';
 import Input from '../../../components/common/Input';
 
-// --- Product Detail Modal ---
+// Product Detail Modal
 export const ProductDetailModal = ({ isOpen, onClose, product }) => {
     if (!product) return null;
     return (
@@ -21,7 +21,7 @@ export const ProductDetailModal = ({ isOpen, onClose, product }) => {
     );
 };
 
-// --- Cancel Order Modal ---
+// Cancel Order Modal
 export const CancelOrderModal = ({ isOpen, onClose, onConfirm }) => {
     const [reason, setReason] = useState('customer_request');
 
@@ -52,7 +52,7 @@ export const CancelOrderModal = ({ isOpen, onClose, onConfirm }) => {
     );
 };
 
-// --- Ship Order Modal ---
+// Ship Order Modal
 export const ShipOrderModal = ({ isOpen, onClose, onConfirm }) => {
     const [shippingInfo, setShippingInfo] = useState({ carrier: '', trackingNumber: '' });
 

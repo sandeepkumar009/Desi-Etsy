@@ -1,7 +1,6 @@
 import api from './api';
 
-// --- PUBLIC PRODUCT FUNCTIONS ---
-
+// PUBLIC PRODUCT FUNCTIONS
 export const getAllProducts = async (params = {}) => {
   try {
     const response = await api.get('/products', { params });
@@ -23,12 +22,10 @@ export const getProductDetails = async (id) => {
 };
 
 
-// --- CATEGORY FUNCTIONS ---
-
+// CATEGORY FUNCTIONS
 export const getAllCategories = async () => {
     try {
         const response = await api.get('/categories');
-        // Assuming the API returns { success: true, data: [...] }
         return response.data.data;
     } catch (error) {
         console.error("Error fetching categories:", error);
@@ -37,8 +34,7 @@ export const getAllCategories = async () => {
 };
 
 
-// --- ARTISAN-SPECIFIC PRODUCT FUNCTIONS ---
-
+// ARTISAN-SPECIFIC PRODUCT FUNCTIONS
 export const getMyProducts = async () => {
     try {
         const response = await api.get('/products/my-products');
@@ -88,8 +84,7 @@ export const deleteProduct = async (productId) => {
 };
 
 
-// --- REVIEW FUNCTIONS (for reference, no changes needed here) ---
-
+// REVIEW FUNCTIONS
 export const getReviewsForProduct = async (productId) => {
     try {
         const response = await api.get(`/reviews/${productId}`);
@@ -135,23 +130,16 @@ export const checkUserPurchase = async (productId) => {
 export const getUserReviewForProduct = async (productId) => {
     try {
         const response = await api.get(`/reviews/user-review/${productId}`);
-        return response.data.data; // This will be the review object or null
+        return response.data.data;
     } catch (error) {
-        // It's normal for this to fail if no review exists, so we don't need to show an error
         if (error.response?.status !== 404) {
             console.error(`Error checking for existing review for product ${productId}:`, error);
         }
-        return null; // Return null if not found or on error
+        return null;
     }
 };
 
-// --- NEW: Admin Product Management Functions ---
-
-/**
- * Fetches all products for an admin, filterable by status.
- * @param {string} status - The status to filter by (e.g., 'pending_approval', 'active').
- * @returns {Promise<Array>} A list of products.
- */
+// Admin Product Management Functions
 export const getProductsForAdmin = async (status) => {
     try {
         const response = await api.get('/products/admin/all', {
@@ -164,12 +152,6 @@ export const getProductsForAdmin = async (status) => {
     }
 };
 
-/**
- * Updates the status of a specific product by an admin.
- * @param {string} productId - The ID of the product to update.
- * @param {string} status - The new status ('active', 'rejected').
- * @returns {Promise<object>} The result of the update operation.
- */
 export const updateProductStatusByAdmin = async (productId, status) => {
     try {
         const response = await api.patch(`/products/admin/status/${productId}`, { status });
@@ -180,13 +162,7 @@ export const updateProductStatusByAdmin = async (productId, status) => {
     }
 };
 
-// --- NEW: Admin Category Management Functions ---
-
-/**
- * Creates a new category. (Admin only)
- * @param {object} categoryData - The data for the new category (e.g., { name, description }).
- * @returns {Promise<object>} The newly created category.
- */
+// Admin Category Management Functions
 export const createCategory = async (categoryData) => {
     try {
         const response = await api.post('/categories', categoryData);
@@ -197,12 +173,6 @@ export const createCategory = async (categoryData) => {
     }
 };
 
-/**
- * Updates an existing category. (Admin only)
- * @param {string} categoryId - The ID of the category to update.
- * @param {object} categoryData - The updated data for the category.
- * @returns {Promise<object>} The updated category.
- */
 export const updateCategory = async (categoryId, categoryData) => {
     try {
         const response = await api.put(`/categories/${categoryId}`, categoryData);
@@ -213,11 +183,6 @@ export const updateCategory = async (categoryId, categoryData) => {
     }
 };
 
-/**
- * Deletes a category. (Admin only)
- * @param {string} categoryId - The ID of the category to delete.
- * @returns {Promise<object>} The result of the delete operation.
- */
 export const deleteCategory = async (categoryId) => {
     console.log(`Deleting category with ID: ${categoryId}`);
     try {

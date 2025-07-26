@@ -23,6 +23,9 @@ router.post(
     applyForArtisan
 );
 
+// Public route to get an artisan's shop profile details
+router.get('/profile/:artisanId', getArtisanPublicProfile);
+
 router.put(
     '/my-profile', 
     protect, 
@@ -40,10 +43,7 @@ router.route('/my-payout-info')
 router.get('/my-payout-summary', protect, authorize('artisan'), getMyPayoutSummary);
 router.get('/my-payout-history', protect, authorize('artisan'), getMyPayoutHistory);
 
-// Public route to get an artisan's shop profile details
-router.get('/profile/:artisanId', getArtisanPublicProfile);
-
-// --- NEW: Admin-only Routes ---
+// Admin-only Routes
 router.route('/admin/all')
     .get(protect, authorize('admin'), getAllArtisans);
 

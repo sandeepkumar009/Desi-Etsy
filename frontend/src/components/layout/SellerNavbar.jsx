@@ -1,16 +1,8 @@
-/*
-* FILE: frontend/src/components/layout/SellerNavbar.jsx
-*
-* DESCRIPTION:
-* The seller navbar is updated to use the real notification system.
-* - The mock notification data and related logic are removed.
-* - The static notification dropdown is replaced with the live <NotificationBell /> component.
-*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import NotificationBell from '../common/NotificationBell'; // <-- ADDED
+import NotificationBell from '../common/NotificationBell';
 
 // Helper Hook for clicking outside an element
 const useOutsideClick = (ref, callback) => {
@@ -47,7 +39,6 @@ const SellerNavbar = ({ toggleSidebar }) => {
 
                     <div className="flex items-center space-x-3 sm:space-x-4">
                         
-                        {/* --- MODIFIED: Replaced mock dropdown with real NotificationBell --- */}
                         <NotificationBell role="artisan" />
 
                         {/* --- Profile Dropdown --- */}

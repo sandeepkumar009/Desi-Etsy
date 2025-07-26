@@ -63,7 +63,6 @@ const deleteFromCloudinary = async (fileUrl) => {
 
     } catch (error) {
         console.error("Error deleting asset from Cloudinary:", error);
-        // Don't throw an error that stops the parent process, just log it.
         return null;
     }
 };

@@ -57,7 +57,6 @@ const ProfilePage = () => {
     const [formData, setFormData] = useState({ name: '' });
     const [profilePicture, setProfilePicture] = useState(null);
     
-    // --- MODIFIED: Initialize preview state directly from user data or null ---
     const [preview, setPreview] = useState(user?.profilePicture || null);
     
     const [isSaving, setIsSaving] = useState(false);
@@ -68,12 +67,11 @@ const ProfilePage = () => {
     useEffect(() => {
         if (user) {
             setFormData({ name: user.name });
-            // --- MODIFIED: Ensure preview is updated if user object changes ---
-            if (!profilePicture) { // Only update from user if no new file is selected
+            if (!profilePicture) {
                 setPreview(user.profilePicture);
             }
         }
-    }, [user, profilePicture]); // Added profilePicture to dependency array
+    }, [user, profilePicture]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -96,7 +94,7 @@ const ProfilePage = () => {
             const updatedUser = await userService.updateUserProfile(data);
             updateUser(updatedUser);
             toast.success("Profile updated successfully!");
-            setProfilePicture(null); // Clear the selected file after successful upload
+            setProfilePicture(null);
             setIsEditMode(false);
         } catch (error) {
             toast.error(error.message || "Failed to update profile.");
@@ -128,8 +126,6 @@ const ProfilePage = () => {
     };
     
     const handleAddressDelete = async (addressId) => {
-        // Replaced window.confirm with a custom modal or a simpler approach if needed
-        // For now, keeping the logic but noting that window.confirm can be problematic
         if (confirm("Are you sure you want to delete this address?")) {
             try {
                 const updatedUser = await userService.deleteUserAddress(addressId);
@@ -168,7 +164,6 @@ const ProfilePage = () => {
                 <form onSubmit={handleProfileSubmit} className="p-6 border rounded-lg">
                     <div className="flex flex-col sm:flex-row items-center gap-6">
                         <div className="relative">
-                            {/* --- MODIFIED: Conditionally render the image --- */}
                             {preview ? (
                                 <img src={preview} alt="Profile Preview" className="h-24 w-24 rounded-full object-cover ring-4 ring-orange-200"/>
                             ) : (

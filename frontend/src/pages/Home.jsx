@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { getAllProducts, getAllCategories } from '../services/productService';
 import ProductCard from "../components/products/ProductCard";
 import Loader from "../components/common/Loader";
+import hero1 from '/assets/hero1.png';
+import hero2 from '/assets/hero2.png';
+import hero3 from '/assets/hero3.png';
+const sliderImages = [hero1, hero2, hero3];
 
 const heroVariants = {
   hidden: { opacity: 0, y: 40 },
@@ -24,12 +28,24 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Effect for background image slider
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === sliderImages.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000); // Change image every 5 seconds
+
+    return () => clearTimeout(timer);
+  }, [currentImageIndex]);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Fetch latest 8 products and all categories in parallel
         const [productsData, categoriesData] = await Promise.all([
           getAllProducts({ limit: 8, sort: 'createdAt', order: 'desc' }),
           getAllCategories()
@@ -57,58 +73,79 @@ const Home = () => {
       };
     });
   }, [categories, products]);
-  
+
   const featuredProducts = products.slice(0, 4);
 
   if (loading) {
     return <Loader />;
   }
-  
+
   if (error) {
       return <div className="text-center py-20 text-red-500">{error}</div>;
   }
 
   return (
     <div className="w-full">
-      {/* Full-Screen Hero Section */}
-      <section className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-orange-100 via-amber-50 to-white relative px-4">
-        <motion.h1
-          className="font-brand text-4xl md:text-6xl font-bold text-gray-800 mb-6 text-center drop-shadow-lg"
-          initial="hidden"
-          animate="visible"
-          variants={heroVariants}
-          custom={1}
-        >
-          Handmade with Love, From Artisans to You
-        </motion.h1>
-        <motion.p
-          className="text-gray-600 text-lg md:text-2xl mb-8 text-center max-w-2xl"
-          initial="hidden"
-          animate="visible"
-          variants={heroVariants}
-          custom={2}
-        >
-          Explore curated, handcrafted treasures for your home & soul.
-        </motion.p>
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={heroVariants}
-          custom={3}
-        >
-          <button
-            className="bg-orange-500 text-white px-10 py-4 rounded-xl font-brand text-lg md:text-xl shadow-lg hover:bg-orange-600 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 mt-6"
-            onClick={() => navigate('/products')}
-          >
-            Shop Now
-          </button>
-        </motion.div>
+      {/* Full-Screen Hero Section with Background Slider */}
+      <section className="min-h-screen flex flex-col justify-center items-center relative px-4 overflow-hidden">
+        {/* Background Image Slider */}
+        <AnimatePresence>
+            <motion.div
+                key={currentImageIndex}
+                initial={{ opacity: 0, scale: 1.1 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.5, ease: 'easeInOut' }}
+                style={{
+                    backgroundImage: `url(${sliderImages[currentImageIndex]})`,
+                }}
+                className="absolute inset-0 w-full h-full bg-cover bg-center"
+            />
+        </AnimatePresence>
+        
+        {/* Overlay to ensure text readability */}
+        <div className="absolute inset-0 bg-black/30"></div>
+
+        {/* Hero Content - positioned above the background */}
+        <div className="relative z-10 text-center">
+            <motion.h1
+              className="font-brand text-4xl md:text-6xl font-bold text-white mb-6 drop-shadow-2xl"
+              initial="hidden"
+              animate="visible"
+              variants={heroVariants}
+              custom={1}
+            >
+              Handmade with Love, From Artisans to You
+            </motion.h1>
+            <motion.p
+              className="text-gray-200 text-lg md:text-2xl mb-8 max-w-2xl mx-auto drop-shadow-xl"
+              initial="hidden"
+              animate="visible"
+              variants={heroVariants}
+              custom={2}
+            >
+              Explore curated, handcrafted treasures for your home & soul.
+            </motion.p>
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={heroVariants}
+              custom={3}
+            >
+              <button
+                className="bg-orange-500 text-white px-10 py-4 rounded-xl font-brand text-lg md:text-xl shadow-lg hover:bg-orange-600 transition-colors duration-200 scale-100 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-orange-400 mt-6"
+                onClick={() => navigate('/products')}
+              >
+                Shop Now
+              </button>
+            </motion.div>
+        </div>
       </section>
 
       {/* Shop by Category Section */}
       <section className="max-w-7xl mx-auto py-20 px-4">
         <motion.h2
-          className="font-brand text-3xl font-bold text-gray-800 mb-10 text-center"
+          className="font-brand text-3xl font-bold text-desi-primary mb-10 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
@@ -157,7 +194,7 @@ const Home = () => {
         transition={{ duration: 0.7, ease: "easeOut" }}
         className="max-w-7xl mx-auto py-12 px-4"
       >
-        <h2 className="font-brand text-3xl font-bold text-gray-800 mb-8 text-center">Newest Arrivals</h2>
+        <h2 className="font-brand text-3xl font-bold text-desi-primary mb-8 text-center">Newest Arrivals</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {featuredProducts.map((prod) => (
             <ProductCard key={prod._id} product={prod} />
@@ -172,7 +209,7 @@ const Home = () => {
           </button>
         </div>
       </motion.section>
-      
+
     </div>
   );
 };

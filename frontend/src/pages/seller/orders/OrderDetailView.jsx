@@ -1,6 +1,3 @@
-// frontend/src/pages/seller/orders/OrderDetailView.jsx
-// This file is updated to correctly display the order history log for the artisan.
-
 import React, { useState } from 'react';
 import Button from '../../../components/common/Button';
 import { ProductDetailModal, CancelOrderModal, ShipOrderModal } from './OrderModals';
@@ -9,7 +6,6 @@ const OrderStatusTimeline = ({ history }) => (
     <div className="mt-4">
         <h4 className="text-md font-semibold text-gray-600 mb-3">Order History</h4>
         <ol className="relative border-l-2 border-indigo-200">
-            {/* **DISPLAY FIX:** Reverse the array to show newest events first */}
             {[...history].reverse().map((event, index) => (
                 <li key={index} className="mb-8 ml-6">
                     <span className="absolute flex items-center justify-center w-6 h-6 bg-indigo-200 rounded-full -left-3 ring-8 ring-white">

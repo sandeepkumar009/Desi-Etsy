@@ -57,7 +57,6 @@ const ProductSchema = new mongoose.Schema({
     tags: [String], // For enhanced searchability
 }, {
     timestamps: true,
-    // Ensure virtual fields are included when converting to JSON
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });

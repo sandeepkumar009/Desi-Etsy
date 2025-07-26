@@ -1,7 +1,3 @@
-// frontend/src/pages/seller/SellerDashboard.jsx
-// This file has been refactored into a single-page dashboard.
-// It now includes the Analytics section directly and uses a modal for profile settings.
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,9 +7,9 @@ import * as artisanService from '../../services/artisanService';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
 import Input from '../../components/common/Input';
-import Modal from '../../components/common/Modal'; // Assuming Modal.jsx is available
+import Modal from '../../components/common/Modal';
 
-// --- Reusable Stat Card Component ---
+// Reusable Stat Card Component
 const StatCard = ({ name, value, icon }) => (
     <div className="bg-white p-5 rounded-lg shadow-md flex items-center">
         <div className="text-3xl bg-indigo-100 p-3 rounded-full text-indigo-600">{icon}</div>
@@ -24,7 +20,7 @@ const StatCard = ({ name, value, icon }) => (
     </div>
 );
 
-// --- NEW: Settings Modal Component ---
+// Settings Modal Component
 const SettingsModal = ({ user, isOpen, onClose, onProfileUpdate }) => {
     const [formData, setFormData] = useState({ brandName: '', story: '' });
     const [bannerFile, setBannerFile] = useState(null);
@@ -105,7 +101,7 @@ const SettingsModal = ({ user, isOpen, onClose, onProfileUpdate }) => {
 };
 
 
-// --- Main Consolidated Dashboard Component ---
+// Main Consolidated Dashboard Component
 const SellerDashboard = () => {
     const { user, updateUser, loading } = useAuth();
     const [stats, setStats] = useState(null);
@@ -165,7 +161,7 @@ const SellerDashboard = () => {
                 onProfileUpdate={updateUser} 
             />
             <div className="space-y-8">
-                {/* --- Profile Section --- */}
+                {/* Profile Section */}
                 <div className="bg-white p-6 rounded-lg shadow-md">
                     <div className="relative">
                         <div className="h-48 bg-gray-200 rounded-lg -m-6 mb-0" style={{ backgroundImage: `url(${bannerImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
@@ -184,12 +180,12 @@ const SellerDashboard = () => {
                     <div className="mt-6 pt-6 border-t"><h2 className="text-xl font-bold text-gray-800 mb-2">My Story</h2><p className="text-gray-600 whitespace-pre-wrap">{story}</p></div>
                 </div>
 
-                {/* --- Key Metrics Section --- */}
+                {/* Key Metrics Section */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {isLoading ? <p className="col-span-4">Loading metrics...</p> : keyMetrics.map(stat => <StatCard key={stat.name} {...stat} />)}
                 </div>
 
-                {/* --- Analytics Section --- */}
+                {/* Analytics Section */}
                 <div className="space-y-8">
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <h2 className="text-2xl font-bold text-gray-800">Sales Analytics</h2>

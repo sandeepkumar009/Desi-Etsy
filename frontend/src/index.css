@@ -134,10 +134,10 @@ body {
     font-family: 'Poppins', sans-serif;
   }
 
-  /* --- NEW: Admin Dashboard Theme ("Cool Authority") --- */
-  .bg-admin-primary { background-color: #2d3748; } /* Dark Slate Gray */
-  .bg-admin-secondary { background-color: #f7fafc; } /* Very Light Gray */
-  .bg-admin-accent { background-color: #4299e1; } /* Bright Blue */
+  /* Admin Dashboard Theme ("Cool Authority") */
+  .bg-admin-primary { background-color: #2d3748; }
+  .bg-admin-secondary { background-color: #f7fafc; }
+  .bg-admin-accent { background-color: #4299e1; }
   .text-admin-primary { color: #2d3748; }
   .text-admin-accent { color: #4299e1; }
   .text-admin-light { color: #f7fafc; }
@@ -145,11 +145,9 @@ body {
   .hover\:bg-admin-accent:hover { background-color: #3182ce; }
   .hover\:text-admin-accent:hover { color: #4299e1; }
   
-  /* Seller Theme (Example if you want to formalize it) */
   .bg-seller-primary { background-color: #4a5568; }
   .text-seller-primary { color: #4a5568; }
   
-  /* Common Utilities */
   .bg-desi-accent\/30 { background-color: rgb(244 162 97 / 0.3); }
   .bg-desi-primary\/10 { background-color: rgb(231 111 81 / 0.1); }
   .bg-desi-accent\/20 { background-color: rgb(244 162 97 / 0.2); }

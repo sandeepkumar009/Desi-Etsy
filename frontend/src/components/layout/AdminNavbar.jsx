@@ -1,16 +1,8 @@
-/*
-* FILE: frontend/src/components/layout/AdminNavbar.jsx
-*
-* DESCRIPTION:
-* The admin navbar is updated to use the real notification system.
-* - The mock notification count is removed.
-* - The static notification icon is replaced with the live <NotificationBell /> component.
-*/
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { motion, AnimatePresence } from 'framer-motion';
-import NotificationBell from '../common/NotificationBell'; // <-- ADDED
+import NotificationBell from '../common/NotificationBell';
 
 // Helper Hook for clicking outside an element
 const useOutsideClick = (ref, callback) => {
@@ -47,7 +39,6 @@ const AdminNavbar = ({ toggleSidebar }) => {
 
                     <div className="flex items-center space-x-3 sm:space-x-4">
                         
-                        {/* --- MODIFIED: Replaced mock icon with real NotificationBell --- */}
                         <NotificationBell role="admin" />
 
                         {/* --- Profile Dropdown --- */}
